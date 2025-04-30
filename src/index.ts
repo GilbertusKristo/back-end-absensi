@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 
 import db from "./utils/database";
-// import docs from './docs/route';
+import docs from './docs/route';
 import cors from 'cors';
 import Router from './routes/api';
 
@@ -27,7 +27,7 @@ async function init() {
         })
 
         app.use("/api", Router);
-        // docs(app);
+        docs(app);
 
 
 
