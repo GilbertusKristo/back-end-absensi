@@ -144,5 +144,34 @@ export default {
         }
     },
 
-    
+    async getAllUsers(req: IReqUser, res: Response) {
+        try {
+            const user = req.user;
+
+            // Cek apakah pengguna memiliki hak akses admin
+            if (user?.role !== "admin") {
+                return res.status(403).json({
+                    message: "Akses ditolak. Hanya admin yang dapat melihat seluruh pengguna.",
+                    data: null,
+                });
+            }
+
+            const users = await UserModel.find({}, "-password").sort({ createdAt: -1 }); // tanpa password
+
+            res.status(200).json({
+                message: "Daftar semua pengguna berhasil diambil",
+                data: users,
+            });
+
+        } catch (error) {
+            const err = error as Error;
+            res.status(500).json({
+                message: err.message,
+                data: null,
+            });
+        }
+    },
+
+
+
 };

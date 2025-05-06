@@ -29,6 +29,8 @@ Router.get("/auth/me",
   authController.me
 );
 
+Router.get("/users", authMiddleware, aclMiddleware([ROLES.ADMIN]), authController.getAllUsers);
+
 /* ------------------- CONTACT (User) ------------------- */
 
 Router.get("/contact", 
