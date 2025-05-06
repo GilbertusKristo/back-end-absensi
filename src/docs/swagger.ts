@@ -3,8 +3,8 @@ import swaggerAutogen from "swagger-autogen";
 const doc = {
     info: {
         version: "v0.0.1",
-        title: "Dokumentasi API Event",
-        description: "Dokumentasi API Event",
+        title: "Dokumentasi API Absensi",
+        description: "Dokumentasi API Absensi",
     },
     servers: [
         {
@@ -34,9 +34,21 @@ const doc = {
                 password: "Password123",
                 confirmPassword: "Password123",
             },
-            ActivationRequest: {
-                code: "abcdef",
+            ContactRequest: {
+                firstName: "John",
+                lastName: "Doe",
+                email: "john.doe@example.com",
+                address: "Jl. Mawar No. 123",
+                phone: "081234567890"
+            },
+            PermissionRequest: {
+                tanggalMulai: "2025-05-10",
+                tanggalSelesai: "2025-05-12",
+                jenisPermission: "Sakit",
+                alasan: "Sedang dalam masa pemulihan",
+                dokumenPendukung: "https://example.com/surat_dokter.jpg"
             }
+
         }
     }
 }

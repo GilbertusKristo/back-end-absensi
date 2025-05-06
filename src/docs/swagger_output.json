@@ -2,8 +2,8 @@
   "openapi": "3.0.0",
   "info": {
     "version": "v0.0.1",
-    "title": "Dokumentasi API Event",
-    "description": "Dokumentasi API Event"
+    "title": "Dokumentasi API Absensi",
+    "description": "Dokumentasi API Absensi"
   },
   "servers": [
     {
