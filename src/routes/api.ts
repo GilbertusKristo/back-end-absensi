@@ -10,106 +10,112 @@ const Router = express.Router();
 
 /* ------------------- AUTH ------------------- */
 
-/**
- * #swagger.tags = ['Auth']
- * #swagger.requestBody = {
- *   required: true,
- *   schema: { $ref: "#/components/schemas/RegisterRequest" }
- * }
- */
-Router.post("/auth/register", authController.register);
+Router.post("/auth/register", 
+  // #swagger.tags = ['Auth']
+  // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/RegisterRequest" } }
+  authController.register
+);
 
-/**
- * #swagger.tags = ['Auth']
- * #swagger.requestBody = {
- *   required: true,
- *   schema: { $ref: "#/components/schemas/LoginRequest" }
- * }
- */
-Router.post("/auth/login", authController.login);
+Router.post("/auth/login", 
+  // #swagger.tags = ['Auth']
+  // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/LoginRequest" } }
+  authController.login
+);
 
-/**
- * #swagger.tags = ['Auth']
- * #swagger.security = [{ "bearerAuth": [] }]
- */
-Router.get("/auth/me", authMiddleware, authController.me);
+Router.get("/auth/me", 
+  // #swagger.tags = ['Auth']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  authMiddleware, 
+  authController.me
+);
 
 /* ------------------- CONTACT (User) ------------------- */
 
-/**
- * #swagger.tags = ['Contact']
- * #swagger.security = [{ "bearerAuth": [] }]
- */
-Router.get("/contact", authMiddleware, aclMiddleware([ROLES.USER]), contactController.getContact);
+Router.get("/contact", 
+  // #swagger.tags = ['Contact']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  authMiddleware, 
+  aclMiddleware([ROLES.USER]), 
+  contactController.getContact
+);
 
-/**
- * #swagger.tags = ['Contact']
- * #swagger.security = [{ "bearerAuth": [] }]
- * #swagger.requestBody = {
- *   required: true,
- *   schema: { $ref: "#/components/schemas/ContactRequest" }
- * }
- */
-Router.post("/contact", authMiddleware, aclMiddleware([ROLES.USER]), contactController.createContact);
+Router.post("/contact", 
+  // #swagger.tags = ['Contact']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/ContactRequest" } }
+  authMiddleware, 
+  aclMiddleware([ROLES.USER]), 
+  contactController.createContact
+);
 
-/**
- * #swagger.tags = ['Contact']
- * #swagger.security = [{ "bearerAuth": [] }]
- * #swagger.requestBody = {
- *   required: true,
- *   schema: { $ref: "#/components/schemas/ContactRequest" }
- * }
- */
-Router.put("/contact", authMiddleware, aclMiddleware([ROLES.USER]), contactController.updateContact);
+Router.put("/contact", 
+  // #swagger.tags = ['Contact']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/ContactRequest" } }
+  authMiddleware, 
+  aclMiddleware([ROLES.USER]), 
+  contactController.updateContact
+);
 
 /* ------------------- CONTACT (Admin) ------------------- */
 
-/**
- * #swagger.tags = ['Contact']
- * #swagger.security = [{ "bearerAuth": [] }]
- */
-Router.get("/contact/all", authMiddleware, aclMiddleware([ROLES.ADMIN]), contactController.getAllContacts);
+Router.get("/contact/all", 
+  // #swagger.tags = ['Contact']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  authMiddleware, 
+  aclMiddleware([ROLES.ADMIN]), 
+  contactController.getAllContacts
+);
 
-/**
- * #swagger.tags = ['Contact']
- * #swagger.security = [{ "bearerAuth": [] }]
- */
-Router.delete("/contact/:userId", authMiddleware, aclMiddleware([ROLES.ADMIN]), contactController.deleteContactByAdmin);
+Router.delete("/contact/:userId", 
+  // #swagger.tags = ['Contact']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  authMiddleware, 
+  aclMiddleware([ROLES.ADMIN]), 
+  contactController.deleteContactByAdmin
+);
 
 /* ------------------- PERMISSION ------------------- */
 
-/**
- * #swagger.tags = ['Permission']
- * #swagger.security = [{ "bearerAuth": [] }]
- * #swagger.requestBody = {
- *   required: true,
- *   schema: { $ref: "#/components/schemas/PermissionRequest" }
- * }
- */
-Router.post("/permission", authMiddleware, aclMiddleware([ROLES.USER]), permissionController.createPermission);
+Router.post("/permission", 
+  // #swagger.tags = ['Permission']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/PermissionRequest" } }
+  authMiddleware, 
+  aclMiddleware([ROLES.USER]), 
+  permissionController.createPermission
+);
 
-/**
- * #swagger.tags = ['Permission']
- * #swagger.security = [{ "bearerAuth": [] }]
- */
-Router.get("/permission/me", authMiddleware, aclMiddleware([ROLES.USER]), permissionController.getMyPermissions);
+Router.get("/permission/me", 
+  // #swagger.tags = ['Permission']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  authMiddleware, 
+  aclMiddleware([ROLES.USER]), 
+  permissionController.getMyPermissions
+);
 
-/**
- * #swagger.tags = ['Permission']
- * #swagger.security = [{ "bearerAuth": [] }]
- */
-Router.get("/permission", authMiddleware, aclMiddleware([ROLES.ADMIN]), permissionController.getAllPermissions);
+Router.get("/permission", 
+  // #swagger.tags = ['Permission']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  authMiddleware, 
+  aclMiddleware([ROLES.ADMIN]), 
+  permissionController.getAllPermissions
+);
 
-/**
- * #swagger.tags = ['Permission']
- * #swagger.security = [{ "bearerAuth": [] }]
- */
-Router.put("/permission/:id/approve", authMiddleware, aclMiddleware([ROLES.ADMIN]), permissionController.approvePermission);
+Router.put("/permission/:id/approve", 
+  // #swagger.tags = ['Permission']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  authMiddleware, 
+  aclMiddleware([ROLES.ADMIN]), 
+  permissionController.approvePermission
+);
 
-/**
- * #swagger.tags = ['Permission']
- * #swagger.security = [{ "bearerAuth": [] }]
- */
-Router.delete("/permission/:id", authMiddleware, aclMiddleware([ROLES.ADMIN]), permissionController.deletePermission);
+Router.delete("/permission/:id", 
+  // #swagger.tags = ['Permission']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  authMiddleware, 
+  aclMiddleware([ROLES.ADMIN]), 
+  permissionController.deletePermission
+);
 
 export default Router;

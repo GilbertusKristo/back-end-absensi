@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import { encrypt } from "../utils/encryption";
-
 import { ROLES } from "../utils/constant";
 
 export interface User {
@@ -10,6 +9,7 @@ export interface User {
     role: string;
     profilePicture: string;
     isActive: boolean;
+    descriptor?: number[]; // ← Tambahan untuk Face Recognition
     createdAt?: string;
 }
 
@@ -42,13 +42,14 @@ const UserSchema = new Schema<User>({
         type: Schema.Types.Boolean,
         default: true,
     },
-},
-    {
-        timestamps: true,
-        
+    descriptor: {
+        type: [Number], // ← Simpan array descriptor hasil face-api.js
+        default: undefined,
     }
-);
-
+},
+{
+    timestamps: true,
+});
 
 UserSchema.pre("save", function (next) {
     const user = this;
@@ -56,15 +57,11 @@ UserSchema.pre("save", function (next) {
     next();
 });
 
-
-
 UserSchema.methods.toJSON = function () {
     const user = this.toObject();
     delete user.password;
     return user;
-}
-
+};
 
 const UserModel = mongoose.model("User", UserSchema);
-
 export default UserModel;

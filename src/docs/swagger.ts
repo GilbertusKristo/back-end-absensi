@@ -10,7 +10,7 @@ const doc = {
         {
             url: "http://localhost:3000/api",
             description: "Lokal server",
-        },
+        },  
         {
             url: "https://back-end-absensi.vercel.app/api",
             description: "Deploy server",
