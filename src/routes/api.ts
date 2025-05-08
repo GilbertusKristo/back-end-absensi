@@ -5,6 +5,9 @@ import aclMiddleware from '../middlewares/acl.middleware';
 import contactController from '../controllers/contact.controller';
 import permissionController from '../controllers/permission.controller';
 import { ROLES } from '../utils/constant';
+// import * as faceController from '../controllers/face.controller';
+import multer from 'multer';
+// import { matchFace, registerFace } from '../controllers/face.controller';
 
 const Router = express.Router();
 
@@ -29,7 +32,10 @@ Router.get("/auth/me",
   authController.me
 );
 
-Router.get("/users", authMiddleware, aclMiddleware([ROLES.ADMIN]), authController.getAllUsers);
+Router.get("/users", authMiddleware, aclMiddleware([ROLES.ADMIN]), authController.getAllUsers
+  // #swagger.tags = ['Auth']
+  // #swagger.security = [{ "bearerAuth": [] }]
+);
 
 /* ------------------- CONTACT (User) ------------------- */
 
@@ -77,6 +83,26 @@ Router.delete("/contact/:userId",
   contactController.deleteContactByAdmin
 );
 
+Router.get("/contact/:userId", 
+  // #swagger.tags = ['Contact']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  // #swagger.parameters['userId'] = { description: "ID of the user whose contact you want to retrieve" }
+  authMiddleware, 
+  aclMiddleware([ROLES.ADMIN]), 
+  contactController.getContactById
+);
+
+Router.patch("/contact/:userId", 
+  // #swagger.tags = ['Contact']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  // #swagger.parameters['userId'] = { description: "ID of the user whose contact you want to update" }
+  // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/ContactRequest" } }
+  authMiddleware, 
+  aclMiddleware([ROLES.ADMIN]), 
+  contactController.updateContactById
+);
+
+
 /* ------------------- PERMISSION ------------------- */
 
 Router.post("/permission", 
@@ -119,5 +145,35 @@ Router.delete("/permission/:id",
   aclMiddleware([ROLES.ADMIN]), 
   permissionController.deletePermission
 );
+
+/* ------------------- FACE ------------------- */
+
+
+// const upload = multer({ dest: 'uploads/' }); // folder sementara untuk simpan gambar wajah
+
+// Router.post(
+//   "/face/register",
+//   // #swagger.tags = ['Face']
+//   // #swagger.security = [{ "bearerAuth": [] }]
+//   // #swagger.requestBody = { required: true, content: { "multipart/form-data": { schema: { type: "object", properties: { file: { type: "string", format: "binary" } } } } }
+//   authMiddleware,
+//   aclMiddleware([ROLES.USER]),
+//   upload.single("file"),
+//   faceController.registerFace
+// );
+
+// Router.post(
+//   "/face/match",
+//   // #swagger.tags = ['Face']
+//   // #swagger.security = [{ "bearerAuth": [] }]
+//   // #swagger.requestBody = { required: true, content: { "multipart/form-data": { schema: { type: "object", properties: { file: { type: "string", format: "binary" } } } } }
+//   authMiddleware,
+//   aclMiddleware([ROLES.USER]),
+//   upload.single("file"),
+//   faceController.matchFace
+// );
+// const upload = multer({ dest: 'uploads/' });
+// Router.post('/face/register', upload.single('image'), registerFace);
+// Router.post('/face/match', upload.single('image'), matchFace);
 
 export default Router;

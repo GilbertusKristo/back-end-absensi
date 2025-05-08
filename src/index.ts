@@ -5,6 +5,7 @@ import db from "./utils/database";
 import docs from './docs/route';
 import cors from 'cors';
 import Router from './routes/api';
+import path from 'path';
 
 async function init() {
     try {
@@ -25,6 +26,7 @@ async function init() {
                 data: null,
             })
         })
+        app.use('/models', express.static(path.join(__dirname, '../public/models')));
 
         app.use("/api", Router);
         docs(app);

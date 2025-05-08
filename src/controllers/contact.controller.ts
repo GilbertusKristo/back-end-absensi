@@ -94,6 +94,67 @@ export default {
             });
         }
     },
+
+    async getContactById(req: Request, res: Response) {
+        const userId = req.params.userId;
+    
+        try {
+            const contact = await ContactModel.findOne({ userId }).populate("userId", "fullName username");
+    
+            if (!contact) {
+                return res.status(404).json({
+                    message: "Contact not found for the specified userId",
+                    data: null,
+                });
+            }
+    
+            res.status(200).json({
+                message: "Contact retrieved successfully by userId",
+                data: contact,
+            });
+        } catch (error) {
+            const err = error as Error;
+            res.status(400).json({
+                message: err.message,
+                data: null,
+            });
+        }
+    },
+
+    async updateContactById(req: Request, res: Response) {
+        const userId = req.params.userId;
+    
+        try {
+            const validated = await contactUpdateDAO.validate(req.body);
+    
+            const existing = await ContactModel.findOne({ userId });
+            if (!existing) {
+                return res.status(404).json({
+                    message: "Contact not found for the specified user",
+                    data: null,
+                });
+            }
+    
+            const updated = await ContactModel.findOneAndUpdate(
+                { userId },
+                { $set: validated },
+                { new: true }
+            );
+    
+            res.status(200).json({
+                message: "Contact updated successfully by admin",
+                data: updated,
+            });
+        } catch (error) {
+            const err = error as Error;
+            res.status(400).json({
+                message: err.message,
+                data: null,
+            });
+        }
+    },
+    
+    
     async getAllContacts(req: IReqUser, res: Response) {
         try {
             const contacts = await ContactModel.find().populate("userId", "fullName username");

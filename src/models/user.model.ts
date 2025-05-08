@@ -60,8 +60,24 @@ UserSchema.pre("save", function (next) {
 UserSchema.methods.toJSON = function () {
     const user = this.toObject();
     delete user.password;
+
+    // Format createdAt ke WIB (Asia/Jakarta)
+    if (user.createdAt) {
+        user.createdAt = new Date(user.createdAt).toLocaleString("id-ID", {
+            timeZone: "Asia/Jakarta",
+        });
+    }
+
+    // Format updatedAt ke WIB (opsional, jika kamu pakai)
+    if (user.updatedAt) {
+        user.updatedAt = new Date(user.updatedAt).toLocaleString("id-ID", {
+            timeZone: "Asia/Jakarta",
+        });
+    }
+
     return user;
 };
+
 
 const UserModel = mongoose.model("User", UserSchema);
 export default UserModel;
