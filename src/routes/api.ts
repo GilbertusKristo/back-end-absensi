@@ -105,46 +105,72 @@ Router.patch("/contact/:userId",
 
 /* ------------------- PERMISSION ------------------- */
 
-Router.post("/permission", 
+// ------------------- PERMISSION (User) -------------------
+
+Router.post("/permission",
   // #swagger.tags = ['Permission']
   // #swagger.security = [{ "bearerAuth": [] }]
   // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/PermissionRequest" } }
-  authMiddleware, 
-  aclMiddleware([ROLES.USER]), 
+  authMiddleware,
+  aclMiddleware([ROLES.USER]),
   permissionController.createPermission
 );
 
-Router.get("/permission/me", 
+Router.get("/permission/me",
   // #swagger.tags = ['Permission']
   // #swagger.security = [{ "bearerAuth": [] }]
-  authMiddleware, 
-  aclMiddleware([ROLES.USER]), 
+  authMiddleware,
+  aclMiddleware([ROLES.USER]),
   permissionController.getMyPermissions
 );
 
-Router.get("/permission", 
+// ------------------- PERMISSION (Admin) -------------------
+
+Router.get("/permission",
   // #swagger.tags = ['Permission']
   // #swagger.security = [{ "bearerAuth": [] }]
-  authMiddleware, 
-  aclMiddleware([ROLES.ADMIN]), 
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
   permissionController.getAllPermissions
 );
 
-Router.put("/permission/:id/approve", 
+Router.get("/permission/:id",
   // #swagger.tags = ['Permission']
   // #swagger.security = [{ "bearerAuth": [] }]
-  authMiddleware, 
-  aclMiddleware([ROLES.ADMIN]), 
+  // #swagger.parameters['id'] = { description: "Permission ID to retrieve" }
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
+  permissionController.getPermissionById
+);
+
+Router.patch("/permission/:id",
+  // #swagger.tags = ['Permission']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  // #swagger.parameters['id'] = { description: "Permission ID to update" }
+  // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/PermissionRequest" } }
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
+  permissionController.updatePermissionById
+);
+
+Router.put("/permission/:id/approve",
+  // #swagger.tags = ['Permission']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  // #swagger.parameters['id'] = { description: "Permission ID to approve" }
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
   permissionController.approvePermission
 );
 
-Router.delete("/permission/:id", 
+Router.delete("/permission/:id",
   // #swagger.tags = ['Permission']
   // #swagger.security = [{ "bearerAuth": [] }]
-  authMiddleware, 
-  aclMiddleware([ROLES.ADMIN]), 
+  // #swagger.parameters['id'] = { description: "Permission ID to delete" }
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
   permissionController.deletePermission
 );
+
 
 /* ------------------- FACE ------------------- */
 

@@ -51,6 +51,59 @@ export default {
       });
     }
   },
+  async getPermissionById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const permission = await PermissionModel.findById(id).populate("userId", "fullName username");
+  
+      if (!permission) {
+        return res.status(404).json({
+          message: "Permission not found",
+          data: null,
+        });
+      }
+  
+      res.status(200).json({
+        message: "Permission retrieved successfully",
+        data: permission,
+      });
+    } catch (error) {
+      res.status(400).json({
+        message: (error as Error).message,
+        data: null,
+      });
+    }
+  },
+
+  async updatePermissionById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const updated = await PermissionModel.findByIdAndUpdate(
+        id,
+        { $set: req.body },
+        { new: true }
+      );
+  
+      if (!updated) {
+        return res.status(404).json({
+          message: "Permission not found",
+          data: null,
+        });
+      }
+  
+      res.status(200).json({
+        message: "Permission updated successfully",
+        data: updated,
+      });
+    } catch (error) {
+      res.status(400).json({
+        message: (error as Error).message,
+        data: null,
+      });
+    }
+  },
+  
+  
 
   async approvePermission(req: Request, res: Response) {
     try {
