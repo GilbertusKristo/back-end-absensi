@@ -433,8 +433,8 @@
         ]
       }
     },
-    "/permission/{id}/approve": {
-      "put": {
+    "/permission/{id}": {
+      "get": {
         "tags": [
           "Permission"
         ],
@@ -446,7 +446,89 @@
             "required": true,
             "schema": {
               "type": "string"
+            },
+            "description": "Permission ID to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Permission"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Permission ID to update"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PermissionRequest"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PermissionRequest"
+              }
             }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Permission"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Permission ID to delete"
           }
         ],
         "responses": {
@@ -467,8 +549,8 @@
         ]
       }
     },
-    "/permission/{id}": {
-      "delete": {
+    "/permission/{id}/approve": {
+      "put": {
         "tags": [
           "Permission"
         ],
@@ -480,7 +562,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Permission ID to approve"
           }
         ],
         "responses": {
