@@ -7,6 +7,7 @@ import permissionController from '../controllers/permission.controller';
 import { ROLES } from '../utils/constant';
 // import * as faceController from '../controllers/face.controller';
 import multer from 'multer';
+import mediaMiddleware from '../middlewares/media.middleware';
 // import { matchFace, registerFace } from '../controllers/face.controller';
 
 const Router = express.Router();
@@ -108,13 +109,58 @@ Router.patch("/contact/:userId",
 // ------------------- PERMISSION (User) -------------------
 
 Router.post("/permission",
-  // #swagger.tags = ['Permission']
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/PermissionRequest" } }
+  /**
+   * #swagger.tags = ['Permission']
+   * #swagger.summary = 'Create Permission'
+   * #swagger.description = 'Endpoint untuk membuat pengajuan izin pengguna dengan dokumen pendukung yang diunggah ke Cloudinary.'
+   * #swagger.security = [{ "bearerAuth": [] }]
+   * #swagger.consumes = ['multipart/form-data']
+   * #swagger.parameters['dokumenPendukung'] = {
+   *    in: 'formData',
+   *    type: 'file',
+   *    required: true,
+   *    description: 'Dokumen pendukung seperti foto atau PDF'
+   * }
+   * #swagger.parameters['tanggalMulai'] = {
+   *    in: 'formData',
+   *    type: 'string',
+   *    required: true,
+   *    example: '2025-05-10'
+   * }
+   * #swagger.parameters['tanggalSelesai'] = {
+   *    in: 'formData',
+   *    type: 'string',
+   *    required: true,
+   *    example: '2025-05-12'
+   * }
+   * #swagger.parameters['jenisPermission'] = {
+   *    in: 'formData',
+   *    type: 'string',
+   *    required: true,
+   *    enum: ['Sakit', 'Cuti', 'Izin Pribadi', 'Izin Keluarga', 'Dinas Luar', 'Cuti Melahirkan', 'Cuti Tahunan']
+   * }
+   * #swagger.parameters['alasan'] = {
+   *    in: 'formData',
+   *    type: 'string',
+   *    required: true,
+   *    example: 'Pergi ke acara keluarga'
+   * }
+   * #swagger.responses[201] = {
+   *    description: 'Permission request submitted',
+   *    schema: { "$ref": "#/components/schemas/PermissionResponse" }
+   * }
+   * #swagger.responses[400] = {
+   *    description: 'Bad Request',
+   *    schema: { message: "Error message", data: null }
+   * }
+   */
   authMiddleware,
   aclMiddleware([ROLES.USER]),
+  mediaMiddleware.single("dokumenPendukung"),
   permissionController.createPermission
 );
+
+
 
 Router.get("/permission/me",
   // #swagger.tags = ['Permission']

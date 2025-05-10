@@ -7,6 +7,7 @@ import cors from 'cors';
 import Router from './routes/api';
 import path from 'path';
 
+
 async function init() {
     try {
 
@@ -14,10 +15,14 @@ async function init() {
 
         console.log("Database Status", result);
         const app = express();
+        app.use(cors());
 
-        app.use(cors())
+        // Gunakan bodyParser.json() hanya untuk JSON request
         app.use(bodyParser.json());
 
+        
+
+        
         const PORT = 3000;
 
         app.get("/", (req, res) => {
@@ -42,3 +47,7 @@ async function init() {
 };
 
 init();
+function formidableMiddleware(): any {
+    throw new Error('Function not implemented.');
+}
+
