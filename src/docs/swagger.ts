@@ -10,7 +10,7 @@ const doc = {
         {
             url: "http://localhost:3000/api",
             description: "Lokal server",
-        },  
+        },
         {
             url: "https://back-end-absensi.vercel.app/api",
             description: "Deploy server",
@@ -41,13 +41,17 @@ const doc = {
                 address: "Jl. Mawar No. 123",
                 phone: "081234567890"
             },
-            PermissionRequest: {
-                tanggalMulai: "2025-05-10",
-                tanggalSelesai: "2025-05-12",
-                jenisPermission: "Sakit",
-                alasan: "Sedang dalam masa pemulihan",
-                dokumenPendukung: "https://example.com/surat_dokter.jpg"
+            UpdatePermissionStatusRequest: {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "enum": ["Pending", "Disetujui", "Ditolak"],
+                        "example": "Disetujui"
+                    }
+                }
             }
+
 
         }
     }

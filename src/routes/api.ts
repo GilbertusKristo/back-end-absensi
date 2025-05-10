@@ -14,22 +14,22 @@ const Router = express.Router();
 
 /* ------------------- AUTH ------------------- */
 
-Router.post("/auth/register", 
+Router.post("/auth/register",
   // #swagger.tags = ['Auth']
   // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/RegisterRequest" } }
   authController.register
 );
 
-Router.post("/auth/login", 
+Router.post("/auth/login",
   // #swagger.tags = ['Auth']
   // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/LoginRequest" } }
   authController.login
 );
 
-Router.get("/auth/me", 
+Router.get("/auth/me",
   // #swagger.tags = ['Auth']
   // #swagger.security = [{ "bearerAuth": [] }]
-  authMiddleware, 
+  authMiddleware,
   authController.me
 );
 
@@ -40,66 +40,66 @@ Router.get("/users", authMiddleware, aclMiddleware([ROLES.ADMIN]), authControlle
 
 /* ------------------- CONTACT (User) ------------------- */
 
-Router.get("/contact", 
+Router.get("/contact",
   // #swagger.tags = ['Contact']
   // #swagger.security = [{ "bearerAuth": [] }]
-  authMiddleware, 
-  aclMiddleware([ROLES.USER]), 
+  authMiddleware,
+  aclMiddleware([ROLES.USER]),
   contactController.getContact
 );
 
-Router.post("/contact", 
+Router.post("/contact",
   // #swagger.tags = ['Contact']
   // #swagger.security = [{ "bearerAuth": [] }]
   // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/ContactRequest" } }
-  authMiddleware, 
-  aclMiddleware([ROLES.USER]), 
+  authMiddleware,
+  aclMiddleware([ROLES.USER]),
   contactController.createContact
 );
 
-Router.put("/contact", 
+Router.put("/contact",
   // #swagger.tags = ['Contact']
   // #swagger.security = [{ "bearerAuth": [] }]
   // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/ContactRequest" } }
-  authMiddleware, 
-  aclMiddleware([ROLES.USER]), 
+  authMiddleware,
+  aclMiddleware([ROLES.USER]),
   contactController.updateContact
 );
 
 /* ------------------- CONTACT (Admin) ------------------- */
 
-Router.get("/contact/all", 
+Router.get("/contact/all",
   // #swagger.tags = ['Contact']
   // #swagger.security = [{ "bearerAuth": [] }]
-  authMiddleware, 
-  aclMiddleware([ROLES.ADMIN]), 
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
   contactController.getAllContacts
 );
 
-Router.delete("/contact/:userId", 
+Router.delete("/contact/:userId",
   // #swagger.tags = ['Contact']
   // #swagger.security = [{ "bearerAuth": [] }]
-  authMiddleware, 
-  aclMiddleware([ROLES.ADMIN]), 
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
   contactController.deleteContactByAdmin
 );
 
-Router.get("/contact/:userId", 
+Router.get("/contact/:userId",
   // #swagger.tags = ['Contact']
   // #swagger.security = [{ "bearerAuth": [] }]
   // #swagger.parameters['userId'] = { description: "ID of the user whose contact you want to retrieve" }
-  authMiddleware, 
-  aclMiddleware([ROLES.ADMIN]), 
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
   contactController.getContactById
 );
 
-Router.patch("/contact/:userId", 
+Router.patch("/contact/:userId",
   // #swagger.tags = ['Contact']
   // #swagger.security = [{ "bearerAuth": [] }]
   // #swagger.parameters['userId'] = { description: "ID of the user whose contact you want to update" }
   // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/ContactRequest" } }
-  authMiddleware, 
-  aclMiddleware([ROLES.ADMIN]), 
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
   contactController.updateContactById
 );
 
@@ -108,57 +108,57 @@ Router.patch("/contact/:userId",
 
 // ------------------- PERMISSION (User) -------------------
 
-Router.post("/permission",
-  /**
-   * #swagger.tags = ['Permission']
-   * #swagger.summary = 'Create Permission'
-   * #swagger.description = 'Endpoint untuk membuat pengajuan izin pengguna dengan dokumen pendukung yang diunggah ke Cloudinary.'
-   * #swagger.security = [{ "bearerAuth": [] }]
-   * #swagger.consumes = ['multipart/form-data']
-   * #swagger.parameters['dokumenPendukung'] = {
-   *    in: 'formData',
-   *    type: 'file',
-   *    required: true,
-   *    description: 'Dokumen pendukung seperti foto atau PDF'
-   * }
-   * #swagger.parameters['tanggalMulai'] = {
-   *    in: 'formData',
-   *    type: 'string',
-   *    required: true,
-   *    example: '2025-05-10'
-   * }
-   * #swagger.parameters['tanggalSelesai'] = {
-   *    in: 'formData',
-   *    type: 'string',
-   *    required: true,
-   *    example: '2025-05-12'
-   * }
-   * #swagger.parameters['jenisPermission'] = {
-   *    in: 'formData',
-   *    type: 'string',
-   *    required: true,
-   *    enum: ['Sakit', 'Cuti', 'Izin Pribadi', 'Izin Keluarga', 'Dinas Luar', 'Cuti Melahirkan', 'Cuti Tahunan']
-   * }
-   * #swagger.parameters['alasan'] = {
-   *    in: 'formData',
-   *    type: 'string',
-   *    required: true,
-   *    example: 'Pergi ke acara keluarga'
-   * }
-   * #swagger.responses[201] = {
-   *    description: 'Permission request submitted',
-   *    schema: { "$ref": "#/components/schemas/PermissionResponse" }
-   * }
-   * #swagger.responses[400] = {
-   *    description: 'Bad Request',
-   *    schema: { message: "Error message", data: null }
-   * }
-   */
+Router.post('/permission',
   authMiddleware,
   aclMiddleware([ROLES.USER]),
   mediaMiddleware.single("dokumenPendukung"),
+  /* #swagger.tags = ['Permission']
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.requestBody = {
+       required: true,
+       content: {
+         "multipart/form-data": {
+           schema: {
+             type: "object",
+             properties: {
+               tanggalMulai: {
+                 type: "string",
+                 format: "date",
+                 description: "Tanggal mulai izin"
+               },
+               tanggalSelesai: {
+                 type: "string",
+                 format: "date",
+                 description: "Tanggal selesai izin"
+               },
+               jenisPermission: {
+                 type: "string",
+                 description: "Jenis izin (Sakit, Cuti, dll)"
+               },
+               alasan: {
+                 type: "string",
+                 description: "Alasan pengajuan izin"
+               },
+               dokumenPendukung: {
+                 type: "string",
+                 format: "binary",
+                 description: "Dokumen pendukung (gambar/pdf)"
+               }
+             }
+           }
+         }
+       }
+     }
+     #swagger.responses[201] = {
+       description: 'Permission berhasil diajukan'
+     }
+  */
   permissionController.createPermission
 );
+
+
+
+
 
 
 
@@ -190,14 +190,40 @@ Router.get("/permission/:id",
 );
 
 Router.patch("/permission/:id",
-  // #swagger.tags = ['Permission']
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.parameters['id'] = { description: "Permission ID to update" }
-  // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/PermissionRequest" } }
+// #swagger.tags = ['Permission']
+// #swagger.security = [{ "bearerAuth": [] }]
+// #swagger.parameters['id'] = { description: "Permission ID yang ingin diperbarui" }
+// #swagger.consumes = ['multipart/form-data']
+// #swagger.requestBody = {
+//   required: true,
+//   content: {
+//     "multipart/form-data": {
+//       schema: {
+//         type: "object",
+//         properties: {
+//           status: {
+//             type: "string",
+//             enum: ["Pending", "Disetujui", "Ditolak"],
+//             description: "Status baru izin"
+//           },
+//           dokumenPendukung: {
+//             type: "string",
+//             format: "binary",
+//             description: "Dokumen pendukung (gambar/pdf) opsional"
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
+// #swagger.responses[200] = { description: "Berhasil memperbarui data izin" }
   authMiddleware,
   aclMiddleware([ROLES.ADMIN]),
+  mediaMiddleware.single("dokumenPendukung"),
   permissionController.updatePermissionById
 );
+
+
 
 Router.put("/permission/:id/approve",
   // #swagger.tags = ['Permission']

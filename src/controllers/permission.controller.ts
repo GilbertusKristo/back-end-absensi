@@ -112,33 +112,43 @@ export default {
     }
   },
 
-  async updatePermissionById(req: Request, res: Response) {
+
+
+  async updatePermissionById(req: IReqUser, res: Response) {
     try {
       const { id } = req.params;
-      const updated = await PermissionModel.findByIdAndUpdate(
-        id,
-        { $set: req.body },
-        { new: true }
-      );
+      const allowedFields = ["tanggalMulai", "tanggalSelesai", "jenisPermission", "alasan", "status", "disetujuiOleh"];
+      const updateData: Record<string, any> = {};
 
-      if (!updated) {
-        return res.status(404).json({
-          message: "Permission not found",
-          data: null,
-        });
+      // Ambil semua field yang valid
+      for (const key of allowedFields) {
+        if (req.body[key] !== undefined) {
+          updateData[key] = req.body[key];
+        }
       }
 
-      res.status(200).json({
-        message: "Permission updated successfully",
-        data: updated,
-      });
+      // Proses dokumenPendukung jika ada file baru yang diunggah
+      if (req.file) {
+        const uploadResult = await uploader.uploadSingle(req.file);
+        updateData.dokumenPendukung = uploadResult.secure_url;
+      }
+
+      if (!Object.keys(updateData).length) {
+        return res.status(400).json({ message: "No valid data provided to update", data: null });
+      }
+
+      const updated = await PermissionModel.findByIdAndUpdate(id, { $set: updateData }, { new: true });
+
+      if (!updated) {
+        return res.status(404).json({ message: "Permission not found", data: null });
+      }
+
+      res.status(200).json({ message: "Permission updated successfully", data: updated });
     } catch (error) {
-      res.status(400).json({
-        message: (error as Error).message,
-        data: null,
-      });
+      res.status(400).json({ message: (error as Error).message, data: null });
     }
   },
+
 
 
 
