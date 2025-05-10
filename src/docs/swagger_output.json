@@ -126,6 +126,103 @@
         ]
       }
     },
+    "/auth/profile-picture": {
+      "patch": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "Foto profil berhasil diperbarui"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profilePicture": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Foto profil baru"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/profile": {
+      "patch": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "Berhasil memperbarui data profil"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullName": {
+                    "type": "string",
+                    "description": "Nama lengkap baru (opsional)"
+                  },
+                  "username": {
+                    "type": "string",
+                    "description": "Username baru (opsional)"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "admin",
+                      "user"
+                    ],
+                    "description": "Peran pengguna (opsional, default: user)"
+                  },
+                  "isActive": {
+                    "type": "boolean",
+                    "description": "Status aktif (opsional)"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/contact": {
       "get": {
         "tags": [
