@@ -114,40 +114,40 @@ export default {
 
 
 
-  async updatePermissionById(req: IReqUser, res: Response) {
+  async updatePermissionById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const allowedFields = ["tanggalMulai", "tanggalSelesai", "jenisPermission", "alasan", "status", "disetujuiOleh"];
-      const updateData: Record<string, any> = {};
 
-      // Ambil semua field yang valid
-      for (const key of allowedFields) {
-        if (req.body[key] !== undefined) {
-          updateData[key] = req.body[key];
-        }
-      }
+      let payload = { ...req.body };
 
-      // Proses dokumenPendukung jika ada file baru yang diunggah
+      // Jika ada file dokumenPendukung yang diupload
       if (req.file) {
-        const uploadResult = await uploader.uploadSingle(req.file);
-        updateData.dokumenPendukung = uploadResult.secure_url;
+        const { buffer, mimetype } = req.file;
+        const result = await uploader.uploadSingle({ buffer, mimetype });
+        payload.dokumenPendukung = result.secure_url;  // Simpan URL Cloudinary
       }
 
-      if (!Object.keys(updateData).length) {
-        return res.status(400).json({ message: "No valid data provided to update", data: null });
-      }
-
-      const updated = await PermissionModel.findByIdAndUpdate(id, { $set: updateData }, { new: true });
+      const updated = await PermissionModel.findByIdAndUpdate(id, { $set: payload }, { new: true });
 
       if (!updated) {
-        return res.status(404).json({ message: "Permission not found", data: null });
+        return res.status(404).json({
+          message: "Permission not found",
+          data: null,
+        });
       }
 
-      res.status(200).json({ message: "Permission updated successfully", data: updated });
+      res.status(200).json({
+        message: "Permission updated successfully",
+        data: updated,
+      });
     } catch (error) {
-      res.status(400).json({ message: (error as Error).message, data: null });
+      res.status(400).json({
+        message: (error as Error).message,
+        data: null,
+      });
     }
   },
+
 
 
 
