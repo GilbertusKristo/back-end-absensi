@@ -53,7 +53,7 @@ Router.post("/contact",
   // #swagger.security = [{ "bearerAuth": [] }]
   // #swagger.requestBody = { required: true, schema: { $ref: "#/components/schemas/ContactRequest" } }
   authMiddleware,
-  aclMiddleware([ROLES.USER]),
+  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   contactController.createContact
 );
 
@@ -110,7 +110,7 @@ Router.patch("/contact/:userId",
 
 Router.post('/permission',
   authMiddleware,
-  aclMiddleware([ROLES.USER]),
+  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   mediaMiddleware.single("dokumenPendukung"),
   /* #swagger.tags = ['Permission']
      #swagger.security = [{ "bearerAuth": [] }]
@@ -190,38 +190,62 @@ Router.get("/permission/:id",
 );
 
 Router.patch("/permission/:id",
-// #swagger.tags = ['Permission']
-// #swagger.security = [{ "bearerAuth": [] }]
-// #swagger.parameters['id'] = { description: "Permission ID yang ingin diperbarui" }
-// #swagger.consumes = ['multipart/form-data']
-// #swagger.requestBody = {
-//   required: true,
-//   content: {
-//     "multipart/form-data": {
-//       schema: {
-//         type: "object",
-//         properties: {
-//           status: {
-//             type: "string",
-//             enum: ["Pending", "Disetujui", "Ditolak"],
-//             description: "Status baru izin"
-//           },
-//           dokumenPendukung: {
-//             type: "string",
-//             format: "binary",
-//             description: "Dokumen pendukung (gambar/pdf) opsional"
-//           }
-//         }
-//       }
-//     }
-//   }
-// }
-// #swagger.responses[200] = { description: "Berhasil memperbarui data izin" }
   authMiddleware,
   aclMiddleware([ROLES.ADMIN]),
   mediaMiddleware.single("dokumenPendukung"),
+  /* #swagger.tags = ['Permission']
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.parameters['id'] = { 
+       in: 'path',
+       required: true,
+       description: 'Permission ID yang ingin diperbarui'
+     }
+     #swagger.consumes = ['multipart/form-data']
+     #swagger.requestBody = {
+       required: false,
+       content: {
+         "multipart/form-data": {
+           schema: {
+             type: "object",
+             properties: {
+               tanggalMulai: {
+                 type: "string",
+                 format: "date",
+                 description: "Tanggal mulai izin (opsional)"
+               },
+               tanggalSelesai: {
+                 type: "string",
+                 format: "date",
+                 description: "Tanggal selesai izin (opsional)"
+               },
+               jenisPermission: {
+                 type: "string",
+                 description: "Jenis izin (Sakit, Cuti, dll) (opsional)"
+               },
+               alasan: {
+                 type: "string",
+                 description: "Alasan pengajuan izin (opsional)"
+               },
+               status: {
+                 type: "string",
+                 enum: ["Pending", "Disetujui", "Ditolak"],
+                 description: "Status baru izin (opsional)"
+               },
+               dokumenPendukung: {
+                 type: "string",
+                 format: "binary",
+                 description: "Dokumen pendukung baru (gambar/pdf) (opsional)"
+               }
+             }
+           }
+         }
+       }
+     }
+     #swagger.responses[200] = { description: "Berhasil memperbarui izin" }
+  */
   permissionController.updatePermissionById
 );
+
 
 
 

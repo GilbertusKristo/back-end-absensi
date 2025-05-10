@@ -508,7 +508,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Berhasil memperbarui data izin"
+            "description": "Berhasil memperbarui izin"
           },
           "400": {
             "description": "Bad Request"
@@ -522,7 +522,50 @@
             "bearerAuth": []
           }
         ],
-        "requestBody": {}
+        "requestBody": {
+          "required": false,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tanggalMulai": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Tanggal mulai izin (opsional)"
+                  },
+                  "tanggalSelesai": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Tanggal selesai izin (opsional)"
+                  },
+                  "jenisPermission": {
+                    "type": "string",
+                    "description": "Jenis izin (Sakit, Cuti, dll) (opsional)"
+                  },
+                  "alasan": {
+                    "type": "string",
+                    "description": "Alasan pengajuan izin (opsional)"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "Pending",
+                      "Disetujui",
+                      "Ditolak"
+                    ],
+                    "description": "Status baru izin (opsional)"
+                  },
+                  "dokumenPendukung": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Dokumen pendukung baru (gambar/pdf) (opsional)"
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "delete": {
         "tags": [
