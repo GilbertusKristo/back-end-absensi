@@ -38,6 +38,75 @@ Router.get("/users", authMiddleware, aclMiddleware([ROLES.ADMIN]), authControlle
   // #swagger.security = [{ "bearerAuth": [] }]
 );
 
+Router.patch("/auth/profile-picture",
+  authMiddleware,
+  mediaMiddleware.single("profilePicture"),
+  /* #swagger.tags = ['Auth']
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.consumes = ['multipart/form-data']
+     #swagger.requestBody = {
+       required: true,
+       content: {
+         "multipart/form-data": {
+           schema: {
+             type: "object",
+             properties: {
+               profilePicture: {
+                 type: "string",
+                 format: "binary",
+                 description: "Foto profil baru"
+               }
+             }
+           }
+         }
+       }
+     }
+     #swagger.responses[200] = { description: "Foto profil berhasil diperbarui" }
+  */
+  authController.updateProfilePicture
+);
+
+Router.patch("/auth/profile",
+  authMiddleware,
+  /* #swagger.tags = ['Auth']
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.requestBody = {
+       required: false,
+       content: {
+         "application/json": {
+           schema: {
+             type: "object",
+             properties: {
+               fullName: {
+                 type: "string",
+                 description: "Nama lengkap baru (opsional)"
+               },
+               username: {
+                 type: "string",
+                 description: "Username baru (opsional)"
+               },
+               role: {
+                 type: "string",
+                 enum: ["admin", "user"],
+                 description: "Peran pengguna (opsional, default: user)"
+               },
+               isActive: {
+                 type: "boolean",
+                 description: "Status aktif (opsional)"
+               }
+             }
+           }
+         }
+       }
+     }
+     #swagger.responses[200] = { description: "Berhasil memperbarui data profil" }
+  */
+  authController.updateProfileData
+);
+
+
+
+
 /* ------------------- CONTACT (User) ------------------- */
 
 Router.get("/contact",

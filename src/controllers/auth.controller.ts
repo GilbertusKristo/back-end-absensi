@@ -5,6 +5,7 @@ import UserModel from '../models/user.model';
 import { encrypt } from '../utils/encryption';
 import { generateToken } from '../utils/jwt';
 import { IReqUser } from '../utils/interfaces';
+import uploader from '../utils/uploader';
 
 
 type TRegister = {
@@ -171,6 +172,47 @@ export default {
             });
         }
     },
+    async updateProfilePicture(req: IReqUser, res: Response) {
+        try {
+            if (!req.file) {
+                return res.status(400).json({ message: "Profile picture is required", data: null });
+            }
+
+            const { buffer, mimetype } = req.file;
+            const uploadResult = await uploader.uploadSingle({ buffer, mimetype });
+
+            const updatedUser = await UserModel.findByIdAndUpdate(
+                req.user?.id,
+                { profilePicture: uploadResult.secure_url },
+                { new: true }
+            );
+
+            res.status(200).json({ message: "Profile picture updated successfully", data: updatedUser });
+        } catch (error) {
+            res.status(500).json({ message: (error as Error).message, data: null });
+        }
+    },
+    async updateProfileData(req: IReqUser, res: Response) {
+        try {
+            const { fullName, username, role, isActive } = req.body;
+
+            const updatedUser = await UserModel.findByIdAndUpdate(
+                req.user?.id,
+                { $set: { fullName, username, role, isActive } },
+                { new: true }
+            );
+
+            if (!updatedUser) {
+                return res.status(404).json({ message: "User not found", data: null });
+            }
+
+            res.status(200).json({ message: "Profile data updated successfully", data: updatedUser });
+        } catch (error) {
+            res.status(500).json({ message: (error as Error).message, data: null });
+        }
+    },
+
+
 
 
 
