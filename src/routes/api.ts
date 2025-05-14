@@ -105,6 +105,35 @@ Router.patch("/auth/profile",
   */
   authController.updateProfileData
 );
+Router.patch("/users/:id/profile-picture",
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
+  mediaMiddleware.single("profilePicture"),
+  /* #swagger.tags = ['User']
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.consumes = ['multipart/form-data']
+     #swagger.requestBody = {
+       required: true,
+       content: {
+         "multipart/form-data": {
+           schema: {
+             type: "object",
+             properties: {
+               profilePicture: {
+                 type: "string",
+                 format: "binary",
+                 description: "Foto profil baru"
+               }
+             }
+           }
+         }
+       }
+     }
+     #swagger.responses[200] = { description: "Foto profil berhasil diperbarui" }
+  */
+  authController.updateProfilePictureById
+);
+
 
 
 Router.get("/users/:id",
@@ -140,6 +169,16 @@ Router.put("/users/:id",
      #swagger.responses[200] = { description: "User updated successfully" }
   */
   authController.updateUserById
+);
+
+Router.delete("/users/:id",
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
+  /* #swagger.tags = ['User']
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.responses[200] = { description: "User deleted successfully" }
+  */
+  authController.deleteUserById
 );
 
 

@@ -262,6 +262,64 @@ export default {
             res.status(500).json({ message: err.message, data: null });
         }
     },
+        /**
+     * Update User's Profile Picture by ID (Admin Only)
+     */
+    async updateProfilePictureById(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+
+            if (!req.file) {
+                return res.status(400).json({ message: "Profile picture is required", data: null });
+            }
+
+            const { buffer, mimetype } = req.file;
+            const uploadResult = await uploader.uploadSingle({ buffer, mimetype });
+
+            const updatedUser = await UserModel.findByIdAndUpdate(
+                id,
+                { profilePicture: uploadResult.secure_url },
+                { new: true }
+            ).select('-password');
+
+            if (!updatedUser) {
+                return res.status(404).json({ message: "User not found", data: null });
+            }
+
+            res.status(200).json({ message: "Profile picture updated successfully", data: updatedUser });
+        } catch (error) {
+            res.status(500).json({ message: (error as Error).message, data: null });
+        }
+    },
+
+        /**
+     * Delete User by ID (Admin Only)
+     */
+    async deleteUserById(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+
+            const deletedUser = await UserModel.findByIdAndDelete(id);
+
+            if (!deletedUser) {
+                return res.status(404).json({ message: "User not found", data: null });
+            }
+
+            res.status(200).json({
+                message: "User deleted successfully",
+                data: {
+                    _id: deletedUser._id,
+                    fullName: deletedUser.fullName,
+                    username: deletedUser.username
+                }
+            });
+        } catch (error) {
+            const err = error as Error;
+            res.status(500).json({ message: err.message, data: null });
+        }
+    },
+
+
 
 
 
