@@ -8,6 +8,8 @@ import { ROLES } from '../utils/constant';
 // import * as faceController from '../controllers/face.controller';
 import multer from 'multer';
 import mediaMiddleware from '../middlewares/media.middleware';
+import { registerFace } from '../controllers/face.controller';
+import { checkIn, checkOut, getHistory, getReport } from '../controllers/attendance.controller';
 // import { matchFace, registerFace } from '../controllers/face.controller';
 
 const Router = express.Router();
@@ -104,6 +106,41 @@ Router.patch("/auth/profile",
   authController.updateProfileData
 );
 
+
+Router.get("/users/:id",
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
+  /* #swagger.tags = ['User']
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.responses[200] = { description: "User details retrieved" }
+  */
+  authController.getUserById
+);
+Router.put("/users/:id",
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
+  /* #swagger.tags = ['User']
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.requestBody = {
+       required: true,
+       content: {
+         "application/json": {
+           schema: {
+             type: "object",
+             properties: {
+               fullName: { type: "string" },
+               username: { type: "string" },
+               role: { type: "string", enum: ["admin", "user"] },
+               isActive: { type: "boolean" }
+             }
+           }
+         }
+       }
+     }
+     #swagger.responses[200] = { description: "User updated successfully" }
+  */
+  authController.updateUserById
+);
 
 
 
@@ -337,34 +374,40 @@ Router.delete("/permission/:id",
 );
 
 
-/* ------------------- FACE ------------------- */
+Router.post(
+  "/face/register",
+  authMiddleware,
+  aclMiddleware([ROLES.USER]),
+  mediaMiddleware.single("image"),
+  registerFace
+);
+
+// Verifikasi wajah (hanya untuk user yang sudah login dan berperan 'user')
 
 
-// const upload = multer({ dest: 'uploads/' }); // folder sementara untuk simpan gambar wajah
+// Check-in (absen masuk) - hanya user yang login
+Router.post(
+  "/attendance/check-in",
+  authMiddleware,
+  aclMiddleware([ROLES.USER]),
+  mediaMiddleware.single("image"),  // ✅ Harus ada ini
+  checkIn
+);
 
-// Router.post(
-//   "/face/register",
-//   // #swagger.tags = ['Face']
-//   // #swagger.security = [{ "bearerAuth": [] }]
-//   // #swagger.requestBody = { required: true, content: { "multipart/form-data": { schema: { type: "object", properties: { file: { type: "string", format: "binary" } } } } }
-//   authMiddleware,
-//   aclMiddleware([ROLES.USER]),
-//   upload.single("file"),
-//   faceController.registerFace
-// );
 
-// Router.post(
-//   "/face/match",
-//   // #swagger.tags = ['Face']
-//   // #swagger.security = [{ "bearerAuth": [] }]
-//   // #swagger.requestBody = { required: true, content: { "multipart/form-data": { schema: { type: "object", properties: { file: { type: "string", format: "binary" } } } } }
-//   authMiddleware,
-//   aclMiddleware([ROLES.USER]),
-//   upload.single("file"),
-//   faceController.matchFace
-// );
-// const upload = multer({ dest: 'uploads/' });
-// Router.post('/face/register', upload.single('image'), registerFace);
-// Router.post('/face/match', upload.single('image'), matchFace);
+// Check-out (absen pulang) - hanya user yang login
+Router.post(
+  "/attendance/check-out",
+  authMiddleware,
+  aclMiddleware([ROLES.USER]),
+  mediaMiddleware.single("image"),  // ✅ Harus ada ini
+  checkOut
+);
+
+// Riwayat absensi user yang login
+Router.get("/attendance/history", authMiddleware, aclMiddleware([ROLES.ADMIN]), getHistory);
+
+// Rekap semua absensi - hanya untuk admin
+Router.get("/attendance/report", authMiddleware, aclMiddleware([ROLES.ADMIN]), getReport);
 
 export default Router;

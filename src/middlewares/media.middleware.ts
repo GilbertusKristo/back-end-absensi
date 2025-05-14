@@ -25,3 +25,6 @@ export default {
     return [upload.array(fieldname), parseFormData];
   },
 };
+
+
+

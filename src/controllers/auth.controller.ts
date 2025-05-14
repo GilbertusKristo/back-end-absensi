@@ -211,6 +211,58 @@ export default {
             res.status(500).json({ message: (error as Error).message, data: null });
         }
     },
+        /**
+     * Get User by ID
+     */
+    async getUserById(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+
+            const user = await UserModel.findById(id).select('-password');
+            if (!user) {
+                return res.status(404).json({ message: "User not found", data: null });
+            }
+
+            res.status(200).json({
+                message: "User retrieved successfully",
+                data: user,
+            });
+
+        } catch (error) {
+            const err = error as Error;
+            res.status(500).json({ message: err.message, data: null });
+        }
+    },
+
+    /**
+     * Update User by ID
+     */
+    async updateUserById(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const { fullName, username, role, isActive } = req.body;
+
+            const updatedUser = await UserModel.findByIdAndUpdate(
+                id,
+                { $set: { fullName, username, role, isActive } },
+                { new: true, runValidators: true }
+            ).select('-password');
+
+            if (!updatedUser) {
+                return res.status(404).json({ message: "User not found", data: null });
+            }
+
+            res.status(200).json({
+                message: "User updated successfully",
+                data: updatedUser,
+            });
+
+        } catch (error) {
+            const err = error as Error;
+            res.status(500).json({ message: err.message, data: null });
+        }
+    },
+
 
 
 
