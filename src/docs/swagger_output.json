@@ -403,6 +403,109 @@
         ]
       }
     },
+    "/users/{id}/reset-password": {
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User password reset successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newPassword": {
+                    "type": "string"
+                  },
+                  "confirmNewPassword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/update-password": {
+      "patch": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "Password updated successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currentPassword": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
+                  },
+                  "confirmNewPassword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/contact": {
       "get": {
         "tags": [
@@ -937,10 +1040,14 @@
     },
     "/attendance/check-in": {
       "post": {
-        "description": "",
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Absen Masuk (Check-In)",
+        "description": "Digunakan oleh User untuk melakukan absensi masuk dengan verifikasi wajah dan lokasi.",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Check-in berhasil"
           },
           "400": {
             "description": "Bad Request"
@@ -951,15 +1058,25 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {}
       }
     },
     "/attendance/check-out": {
       "post": {
-        "description": "",
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Absensi Pulang (Check-Out)",
+        "description": "Digunakan oleh USER untuk melakukan absensi pulang menggunakan Face Recognition dan lokasi.",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Berhasil check-out"
           },
           "400": {
             "description": "Bad Request"
@@ -970,30 +1087,208 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {}
       }
     },
     "/attendance/history": {
       "get": {
-        "description": "",
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Lihat Riwayat Kehadiran Saya",
+        "description": "Dapat diakses oleh USER dan ADMIN untuk melihat semua riwayat absensi user yang login.",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Berhasil mendapatkan riwayat kehadiran"
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/attendance/history-by-date": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Lihat Riwayat Kehadiran Saya Berdasarkan Tanggal",
+        "description": "Dapat diakses oleh USER dan ADMIN. Query parameter: ?date=YYYY-MM-DD",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "description": "Tanggal dalam format YYYY-MM-DD",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil mendapatkan riwayat berdasarkan tanggal"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/attendance/all": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Lihat Semua Riwayat Kehadiran",
+        "description": "Hanya dapat diakses oleh ADMIN untuk melihat semua riwayat absensi.",
+        "responses": {
+          "200": {
+            "description": "Berhasil mendapatkan semua riwayat kehadiran"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/attendance/report": {
       "get": {
-        "description": "",
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Laporan Kehadiran Semua User",
+        "description": "Hanya dapat diakses oleh ADMIN untuk melihat rekap laporan kehadiran semua user.",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Berhasil mendapatkan laporan kehadiran"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/attendance/statistics": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Laporan Statistik Kehadiran Bulanan",
+        "description": "Hanya bisa diakses oleh Admin. Menampilkan statistik jumlah check-in dan check-out dalam bulan ini.",
+        "responses": {
+          "200": {
+            "description": "Statistik kehadiran berhasil diambil"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/attendance/{id}": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Detail Kehadiran Berdasarkan ID",
+        "description": "Hanya dapat diakses oleh ADMIN untuk melihat detail absensi berdasarkan ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID absensi yang ingin dilihat"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil mendapatkan detail absensi"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/attendance/export/excel": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Export Kehadiran ke Excel",
+        "description": "Hanya dapat diakses oleh ADMIN untuk mengunduh rekap kehadiran dalam format Excel (.xlsx).",
+        "responses": {
+          "200": {
+            "description": "Berhasil mengunduh laporan dalam format Excel"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/attendance/export/pdf": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Export Kehadiran ke PDF",
+        "description": "Hanya dapat diakses oleh ADMIN untuk mengunduh rekap kehadiran dalam format PDF.",
+        "responses": {
+          "200": {
+            "description": "Berhasil mengunduh laporan dalam format PDF"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },
