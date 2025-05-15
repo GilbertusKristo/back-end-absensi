@@ -211,9 +211,9 @@ export default {
             res.status(500).json({ message: (error as Error).message, data: null });
         }
     },
-        /**
-     * Get User by ID
-     */
+    /**
+ * Get User by ID
+ */
     async getUserById(req: Request, res: Response) {
         try {
             const { id } = req.params;
@@ -262,9 +262,9 @@ export default {
             res.status(500).json({ message: err.message, data: null });
         }
     },
-        /**
-     * Update User's Profile Picture by ID (Admin Only)
-     */
+    /**
+ * Update User's Profile Picture by ID (Admin Only)
+ */
     async updateProfilePictureById(req: Request, res: Response) {
         try {
             const { id } = req.params;
@@ -292,9 +292,9 @@ export default {
         }
     },
 
-        /**
-     * Delete User by ID (Admin Only)
-     */
+    /**
+ * Delete User by ID (Admin Only)
+ */
     async deleteUserById(req: Request, res: Response) {
         try {
             const { id } = req.params;
@@ -318,6 +318,80 @@ export default {
             res.status(500).json({ message: err.message, data: null });
         }
     },
+    /**
+     * Admin Reset User Password by ID
+     */
+    /**
+ * Reset User Password by ID (Admin Only)
+ */
+    async resetUserPasswordById(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const { newPassword, confirmNewPassword } = req.body;
+
+            if (!newPassword || !confirmNewPassword) {
+                return res.status(400).json({ message: "New password and confirmation are required", data: null });
+            }
+
+            if (newPassword !== confirmNewPassword) {
+                return res.status(400).json({ message: "New passwords do not match", data: null });
+            }
+
+            const user = await UserModel.findById(id);
+            if (!user) {
+                return res.status(404).json({ message: "User not found", data: null });
+            }
+
+            user.password = encrypt(newPassword);  // ✅ Pastikan dienkripsi
+            await user.save();
+
+            res.status(200).json({ message: "User password reset successfully", data: null });
+
+        } catch (error) {
+            res.status(500).json({ message: (error as Error).message, data: null });
+        }
+    },
+
+
+    /**
+ * Update Password (Self)
+ */
+    /**
+ * Update Password (Self)
+ */
+    async updatePassword(req: IReqUser, res: Response) {
+        try {
+            const { currentPassword, newPassword, confirmNewPassword } = req.body;
+
+            if (!currentPassword || !newPassword || !confirmNewPassword) {
+                return res.status(400).json({ message: "All password fields are required", data: null });
+            }
+
+            if (newPassword !== confirmNewPassword) {
+                return res.status(400).json({ message: "New passwords do not match", data: null });
+            }
+
+            const user = await UserModel.findById(req.user?.id);
+            if (!user) {
+                return res.status(404).json({ message: "User not found", data: null });
+            }
+
+            const isPasswordValid = encrypt(currentPassword) === user.password;
+            if (!isPasswordValid) {
+                return res.status(400).json({ message: "Current password is incorrect", data: null });
+            }
+
+            user.password = encrypt(newPassword);  // ✅ Pastikan dienkripsi
+            await user.save();
+
+            res.status(200).json({ message: "Password updated successfully", data: null });
+
+        } catch (error) {
+            res.status(500).json({ message: (error as Error).message, data: null });
+        }
+    },
+
+
 
 
 
