@@ -1025,7 +1025,7 @@
         "description": "Hanya untuk User yang sudah login. Upload foto wajah untuk didaftarkan.",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Wajah berhasil didaftarkan"
           },
           "400": {
             "description": "Bad Request"
@@ -1045,7 +1045,26 @@
             "bearerAuth": []
           }
         ],
-        "requestBody": {}
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "image"
+                ],
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Foto wajah"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/attendance/check-in": {
@@ -1054,10 +1073,10 @@
           "Attendance"
         ],
         "summary": "Absen Masuk (Check-In)",
-        "description": "Digunakan oleh User untuk melakukan absensi masuk dengan verifikasi wajah dan lokasi.",
+        "description": "User melakukan check-in dengan verifikasi wajah dan lokasi.",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Check-in berhasil"
           },
           "400": {
             "description": "Bad Request"
@@ -1074,7 +1093,40 @@
             "bearerAuth": []
           }
         ],
-        "requestBody": {}
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "image",
+                  "latitude",
+                  "longitude"
+                ],
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Foto wajah"
+                  },
+                  "latitude": {
+                    "type": "string",
+                    "description": "Latitude lokasi"
+                  },
+                  "longitude": {
+                    "type": "string",
+                    "description": "Longitude lokasi"
+                  },
+                  "locationName": {
+                    "type": "string",
+                    "description": "Nama lokasi (opsional)"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/attendance/check-out": {
@@ -1083,10 +1135,10 @@
           "Attendance"
         ],
         "summary": "Absen Pulang (Check-Out)",
-        "description": "Digunakan oleh User untuk melakukan absensi pulang dengan verifikasi wajah dan lokasi.",
+        "description": "User melakukan check-out dengan verifikasi wajah dan lokasi.",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Check-out berhasil"
           },
           "400": {
             "description": "Bad Request"
@@ -1103,7 +1155,40 @@
             "bearerAuth": []
           }
         ],
-        "requestBody": {}
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "image",
+                  "latitude",
+                  "longitude"
+                ],
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Foto wajah"
+                  },
+                  "latitude": {
+                    "type": "string",
+                    "description": "Latitude lokasi"
+                  },
+                  "longitude": {
+                    "type": "string",
+                    "description": "Longitude lokasi"
+                  },
+                  "locationName": {
+                    "type": "string",
+                    "description": "Nama lokasi (opsional)"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/attendance/history": {
@@ -1137,7 +1222,7 @@
           "Attendance"
         ],
         "summary": "Lihat Riwayat Kehadiran Saya Berdasarkan Tanggal",
-        "description": "Dapat diakses oleh USER dan ADMIN. Query parameter: ?date=YYYY-MM-DD",
+        "description": "Dapat diakses oleh USER dan ADMIN. Gunakan query ?date=YYYY-MM-DD",
         "parameters": [
           {
             "name": "date",
@@ -1214,7 +1299,7 @@
           "Attendance"
         ],
         "summary": "Laporan Statistik Kehadiran Bulanan",
-        "description": "Hanya bisa diakses oleh Admin. Menampilkan statistik jumlah check-in dan check-out dalam bulan ini.",
+        "description": "Hanya dapat diakses oleh ADMIN. Menampilkan statistik check-in dan check-out bulan ini.",
         "responses": {
           "200": {
             "description": "Statistik kehadiran berhasil diambil"

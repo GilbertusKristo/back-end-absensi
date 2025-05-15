@@ -460,223 +460,211 @@ Router.delete("/permission/:id",
 );
 
 
-Router.post(
-  "/face/register",
+Router.post("/face/register",
   authMiddleware,
   aclMiddleware([ROLES.USER]),
   mediaMiddleware.single("image"),
-  // #swagger.tags = ['Face']
-  // #swagger.summary = 'Daftarkan Wajah untuk Face Recognition'
-  // #swagger.description = 'Hanya untuk User yang sudah login. Upload foto wajah untuk didaftarkan.'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.consumes = ['multipart/form-data']
-  // #swagger.requestBody = {
-  //   required: true,
-  //   content: {
-  //     "multipart/form-data": {
-  //       schema: {
-  //         type: "object",
-  //         required: ["image"],
-  //         properties: {
-  //           image: {
-  //             type: "string",
-  //             format: "binary",
-  //             description: "Foto wajah untuk pendaftaran"
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+  /* #swagger.tags = ['Face']
+     #swagger.summary = 'Daftarkan Wajah untuk Face Recognition'
+     #swagger.description = 'Hanya untuk User yang sudah login. Upload foto wajah untuk didaftarkan.'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.consumes = ['multipart/form-data']
+     #swagger.requestBody = {
+       required: true,
+       content: {
+         "multipart/form-data": {
+           schema: {
+             type: "object",
+             required: ["image"],
+             properties: {
+               image: { type: "string", format: "binary", description: "Foto wajah" }
+             }
+           }
+         }
+       }
+     }
+     #swagger.responses[200] = { description: "Wajah berhasil didaftarkan" }
+  */
   registerFace
 );
 
 
 
-Router.post(
-  "/attendance/check-in",
+
+Router.post("/attendance/check-in",
   authMiddleware,
   aclMiddleware([ROLES.USER]),
   mediaMiddleware.single("image"),
-  // #swagger.tags = ['Attendance']
-  // #swagger.summary = 'Absen Masuk (Check-In)'
-  // #swagger.description = 'Digunakan oleh User untuk melakukan absensi masuk dengan verifikasi wajah dan lokasi.'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.consumes = ['multipart/form-data']
-  // #swagger.requestBody = {
-  //   required: true,
-  //   content: {
-  //     "multipart/form-data": {
-  //       schema: {
-  //         type: "object",
-  //         required: ["image", "latitude", "longitude"],
-  //         properties: {
-  //           image: {
-  //             type: "string",
-  //             format: "binary",
-  //             description: "Foto wajah untuk verifikasi"
-  //           },
-  //           latitude: {
-  //             type: "string",
-  //             description: "Latitude lokasi pengguna"
-  //           },
-  //           longitude: {
-  //             type: "string",
-  //             description: "Longitude lokasi pengguna"
-  //           },
-  //           locationName: {
-  //             type: "string",
-  //             description: "Nama lokasi (opsional)"
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Absen Masuk (Check-In)'
+     #swagger.description = 'User melakukan check-in dengan verifikasi wajah dan lokasi.'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.consumes = ['multipart/form-data']
+     #swagger.requestBody = {
+       required: true,
+       content: {
+         "multipart/form-data": {
+           schema: {
+             type: "object",
+             required: ["image", "latitude", "longitude"],
+             properties: {
+               image: { type: "string", format: "binary", description: "Foto wajah" },
+               latitude: { type: "string", description: "Latitude lokasi" },
+               longitude: { type: "string", description: "Longitude lokasi" },
+               locationName: { type: "string", description: "Nama lokasi (opsional)" }
+             }
+           }
+         }
+       }
+     }
+     #swagger.responses[200] = { description: "Check-in berhasil" }
+  */
   checkIn
 );
 
 
 
-Router.post(
-  "/attendance/check-out",
+
+Router.post("/attendance/check-out",
   authMiddleware,
   aclMiddleware([ROLES.USER]),
   mediaMiddleware.single("image"),
-  // #swagger.tags = ['Attendance']
-  // #swagger.summary = 'Absen Pulang (Check-Out)'
-  // #swagger.description = 'Digunakan oleh User untuk melakukan absensi pulang dengan verifikasi wajah dan lokasi.'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.consumes = ['multipart/form-data']
-  // #swagger.requestBody = {
-  //   required: true,
-  //   content: {
-  //     "multipart/form-data": {
-  //       schema: {
-  //         type: "object",
-  //         required: ["image", "latitude", "longitude"],
-  //         properties: {
-  //           image: {
-  //             type: "string",
-  //             format: "binary",
-  //             description: "Foto wajah untuk verifikasi"
-  //           },
-  //           latitude: {
-  //             type: "string",
-  //             description: "Latitude lokasi pengguna"
-  //           },
-  //           longitude: {
-  //             type: "string",
-  //             description: "Longitude lokasi pengguna"
-  //           },
-  //           locationName: {
-  //             type: "string",
-  //             description: "Nama lokasi (opsional)"
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Absen Pulang (Check-Out)'
+     #swagger.description = 'User melakukan check-out dengan verifikasi wajah dan lokasi.'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.consumes = ['multipart/form-data']
+     #swagger.requestBody = {
+       required: true,
+       content: {
+         "multipart/form-data": {
+           schema: {
+             type: "object",
+             required: ["image", "latitude", "longitude"],
+             properties: {
+               image: { type: "string", format: "binary", description: "Foto wajah" },
+               latitude: { type: "string", description: "Latitude lokasi" },
+               longitude: { type: "string", description: "Longitude lokasi" },
+               locationName: { type: "string", description: "Nama lokasi (opsional)" }
+             }
+           }
+         }
+       }
+     }
+     #swagger.responses[200] = { description: "Check-out berhasil" }
+  */
   checkOut
 );
 
 
 
 // Riwayat absensi user yang login
+/* Lihat Riwayat Kehadiran */
 Router.get("/attendance/history",
   authMiddleware,
   aclMiddleware([ROLES.USER, ROLES.ADMIN]),
-  // #swagger.tags = ['Attendance']
-  // #swagger.summary = 'Lihat Riwayat Kehadiran Saya'
-  // #swagger.description = 'Dapat diakses oleh USER dan ADMIN untuk melihat semua riwayat absensi user yang login.'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.responses[200] = { description: 'Berhasil mendapatkan riwayat kehadiran' }
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Lihat Riwayat Kehadiran Saya'
+     #swagger.description = 'Dapat diakses oleh USER dan ADMIN untuk melihat semua riwayat absensi user yang login.'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.responses[200] = { description: 'Berhasil mendapatkan riwayat kehadiran' }
+  */
   getHistory
 );
 
+/* Lihat Riwayat Berdasarkan Tanggal */
 Router.get("/attendance/history-by-date",
   authMiddleware,
   aclMiddleware([ROLES.USER, ROLES.ADMIN]),
-  // #swagger.tags = ['Attendance']
-  // #swagger.summary = 'Lihat Riwayat Kehadiran Saya Berdasarkan Tanggal'
-  // #swagger.description = 'Dapat diakses oleh USER dan ADMIN. Query parameter: ?date=YYYY-MM-DD'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.parameters['date'] = { in: 'query', required: true, type: 'string', description: 'Tanggal dalam format YYYY-MM-DD' }
-  // #swagger.responses[200] = { description: 'Berhasil mendapatkan riwayat berdasarkan tanggal' }
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Lihat Riwayat Kehadiran Saya Berdasarkan Tanggal'
+     #swagger.description = 'Dapat diakses oleh USER dan ADMIN. Gunakan query ?date=YYYY-MM-DD'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.parameters['date'] = { in: 'query', required: true, type: 'string', description: 'Tanggal dalam format YYYY-MM-DD' }
+     #swagger.responses[200] = { description: 'Berhasil mendapatkan riwayat berdasarkan tanggal' }
+  */
   getHistoryByDate
 );
 
+/* Lihat Semua Riwayat Kehadiran */
 Router.get("/attendance/all",
   authMiddleware,
   aclMiddleware([ROLES.ADMIN]),
-  // #swagger.tags = ['Attendance']
-  // #swagger.summary = 'Lihat Semua Riwayat Kehadiran'
-  // #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk melihat semua riwayat absensi.'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.responses[200] = { description: 'Berhasil mendapatkan semua riwayat kehadiran' }
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Lihat Semua Riwayat Kehadiran'
+     #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk melihat semua riwayat absensi.'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.responses[200] = { description: 'Berhasil mendapatkan semua riwayat kehadiran' }
+  */
   getAllAttendance
 );
 
+/* Laporan Kehadiran Semua User */
 Router.get("/attendance/report",
   authMiddleware,
   aclMiddleware([ROLES.ADMIN]),
-  // #swagger.tags = ['Attendance']
-  // #swagger.summary = 'Laporan Kehadiran Semua User'
-  // #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk melihat rekap laporan kehadiran semua user.'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.responses[200] = { description: 'Berhasil mendapatkan laporan kehadiran' }
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Laporan Kehadiran Semua User'
+     #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk melihat rekap laporan kehadiran semua user.'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.responses[200] = { description: 'Berhasil mendapatkan laporan kehadiran' }
+  */
   getReport
 );
 
+/* Statistik Kehadiran Bulanan */
 Router.get("/attendance/statistics",
   authMiddleware,
   aclMiddleware([ROLES.ADMIN]),
-  // #swagger.tags = ['Attendance']
-  // #swagger.summary = 'Laporan Statistik Kehadiran Bulanan'
-  // #swagger.description = 'Hanya bisa diakses oleh Admin. Menampilkan statistik jumlah check-in dan check-out dalam bulan ini.'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.responses[200] = { description: 'Statistik kehadiran berhasil diambil' }
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Laporan Statistik Kehadiran Bulanan'
+     #swagger.description = 'Hanya dapat diakses oleh ADMIN. Menampilkan statistik check-in dan check-out bulan ini.'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.responses[200] = { description: 'Statistik kehadiran berhasil diambil' }
+  */
   getAttendanceStatistics
 );
 
-
+/* Detail Kehadiran Berdasarkan ID */
 Router.get("/attendance/:id",
   authMiddleware,
   aclMiddleware([ROLES.ADMIN]),
-  // #swagger.tags = ['Attendance']
-  // #swagger.summary = 'Detail Kehadiran Berdasarkan ID'
-  // #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk melihat detail absensi berdasarkan ID.'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.parameters['id'] = { in: 'path', required: true, type: 'string', description: 'ID absensi yang ingin dilihat' }
-  // #swagger.responses[200] = { description: 'Berhasil mendapatkan detail absensi' }
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Detail Kehadiran Berdasarkan ID'
+     #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk melihat detail absensi berdasarkan ID.'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.parameters['id'] = { in: 'path', required: true, type: 'string', description: 'ID absensi yang ingin dilihat' }
+     #swagger.responses[200] = { description: 'Berhasil mendapatkan detail absensi' }
+  */
   getAttendanceById
 );
 
-
-
-
+/* Export Kehadiran ke Excel */
 Router.get("/attendance/export/excel",
   authMiddleware,
   aclMiddleware([ROLES.ADMIN]),
-  // #swagger.tags = ['Attendance']
-  // #swagger.summary = 'Export Kehadiran ke Excel'
-  // #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk mengunduh rekap kehadiran dalam format Excel (.xlsx).'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.responses[200] = { description: 'Berhasil mengunduh laporan dalam format Excel' }
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Export Kehadiran ke Excel'
+     #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk mengunduh rekap kehadiran dalam format Excel (.xlsx).'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.responses[200] = { description: 'Berhasil mengunduh laporan dalam format Excel' }
+  */
   exportAttendanceExcel
 );
 
+/* Export Kehadiran ke PDF */
 Router.get("/attendance/export/pdf",
   authMiddleware,
   aclMiddleware([ROLES.ADMIN]),
-  // #swagger.tags = ['Attendance']
-  // #swagger.summary = 'Export Kehadiran ke PDF'
-  // #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk mengunduh rekap kehadiran dalam format PDF.'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.responses[200] = { description: 'Berhasil mengunduh laporan dalam format PDF' }
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Export Kehadiran ke PDF'
+     #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk mengunduh rekap kehadiran dalam format PDF.'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.responses[200] = { description: 'Berhasil mengunduh laporan dalam format PDF' }
+  */
   exportAttendancePDF
 );
+
 
 
 export default Router;
