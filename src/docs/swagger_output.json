@@ -1018,7 +1018,11 @@
     },
     "/face/register": {
       "post": {
-        "description": "",
+        "tags": [
+          "Face"
+        ],
+        "summary": "Daftarkan Wajah untuk Face Recognition",
+        "description": "Hanya untuk User yang sudah login. Upload foto wajah untuk didaftarkan.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1035,7 +1039,13 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {}
       }
     },
     "/attendance/check-in": {
@@ -1047,7 +1057,7 @@
         "description": "Digunakan oleh User untuk melakukan absensi masuk dengan verifikasi wajah dan lokasi.",
         "responses": {
           "200": {
-            "description": "Check-in berhasil"
+            "description": "OK"
           },
           "400": {
             "description": "Bad Request"
@@ -1072,11 +1082,11 @@
         "tags": [
           "Attendance"
         ],
-        "summary": "Absensi Pulang (Check-Out)",
-        "description": "Digunakan oleh USER untuk melakukan absensi pulang menggunakan Face Recognition dan lokasi.",
+        "summary": "Absen Pulang (Check-Out)",
+        "description": "Digunakan oleh User untuk melakukan absensi pulang dengan verifikasi wajah dan lokasi.",
         "responses": {
           "200": {
-            "description": "Berhasil check-out"
+            "description": "OK"
           },
           "400": {
             "description": "Bad Request"

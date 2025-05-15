@@ -465,6 +465,29 @@ Router.post(
   authMiddleware,
   aclMiddleware([ROLES.USER]),
   mediaMiddleware.single("image"),
+  // #swagger.tags = ['Face']
+// #swagger.summary = 'Daftarkan Wajah untuk Face Recognition'
+// #swagger.description = 'Hanya untuk User yang sudah login. Upload foto wajah untuk didaftarkan.'
+// #swagger.security = [{ "bearerAuth": [] }]
+// #swagger.consumes = ['multipart/form-data']
+// #swagger.requestBody = {
+// #   required: true,
+// #   content: {
+// #     "multipart/form-data": {
+// #       schema: {
+// #         type: "object",
+// #         required: ["image"],
+// #         properties: {
+// #           image: {
+// #             type: "string",
+// #             format: "binary",
+// #             description: "Foto wajah untuk pendaftaran"
+// #           }
+// #         }
+// #       }
+// #     }
+// #   }
+// # }
   registerFace
 );
 
@@ -476,29 +499,41 @@ Router.post(
   authMiddleware,
   aclMiddleware([ROLES.USER]),
   mediaMiddleware.single("image"),
-  // #swagger.tags = ['Attendance']
-  // #swagger.summary = 'Absen Masuk (Check-In)'
-  // #swagger.description = 'Digunakan oleh User untuk melakukan absensi masuk dengan verifikasi wajah dan lokasi.'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.consumes = ['multipart/form-data']
-  // #swagger.requestBody = {
-  //   required: true,
-  //   content: {
-  //     "multipart/form-data": {
-  //       schema: {
-  //         type: "object",
-  //         properties: {
-  //           latitude: { type: "number", example: -7.123456 },
-  //           longitude: { type: "number", example: 110.123456 },
-  //           locationName: { type: "string", example: "Kantor Pusat" },
-  //           image: { type: "string", format: "binary" }
-  //         },
-  //         required: ["latitude", "longitude", "image"]
-  //       }
-  //     }
-  //   }
-  // }
-  // #swagger.responses[200] = { description: 'Check-in berhasil' }
+// #swagger.tags = ['Attendance']
+// #swagger.summary = 'Absen Masuk (Check-In)'
+// #swagger.description = 'Digunakan oleh User untuk melakukan absensi masuk dengan verifikasi wajah dan lokasi.'
+// #swagger.security = [{ "bearerAuth": [] }]
+// #swagger.consumes = ['multipart/form-data']
+// #swagger.requestBody = {
+// #   required: true,
+// #   content: {
+// #     "multipart/form-data": {
+// #       schema: {
+// #         type: "object",
+// #         required: ["image", "latitude", "longitude"],
+// #         properties: {
+// #           image: {
+// #             type: "string",
+// #             format: "binary",
+// #             description: "Foto wajah"
+// #           },
+// #           latitude: {
+// #             type: "string",
+// #             description: "Latitude lokasi pengguna"
+// #           },
+// #           longitude: {
+// #             type: "string",
+// #             description: "Longitude lokasi pengguna"
+// #           },
+// #           locationName: {
+// #             type: "string",
+// #             description: "Nama lokasi (opsional)"
+// #           }
+// #         }
+// #       }
+// #     }
+// #   }
+// # }
   checkIn
 );
 
@@ -509,28 +544,41 @@ Router.post(
   authMiddleware,
   aclMiddleware([ROLES.USER]),
   mediaMiddleware.single("image"),
-  // #swagger.tags = ['Attendance']
-  // #swagger.summary = 'Absensi Pulang (Check-Out)'
-  // #swagger.description = 'Digunakan oleh USER untuk melakukan absensi pulang menggunakan Face Recognition dan lokasi.'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  // #swagger.consumes = ['multipart/form-data']
-  // #swagger.requestBody = {
-  //   required: true,
-  //   content: {
-  //     "multipart/form-data": {
-  //       schema: {
-  //         type: "object",
-  //         properties: {
-  //           image: { type: "string", format: "binary", description: "Foto wajah untuk verifikasi" },
-  //           latitude: { type: "string", description: "Koordinat Latitude" },
-  //           longitude: { type: "string", description: "Koordinat Longitude" },
-  //           locationName: { type: "string", description: "Nama lokasi (opsional)" }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-  // #swagger.responses[200] = { description: 'Berhasil check-out' }
+// #swagger.tags = ['Attendance']
+// #swagger.summary = 'Absen Pulang (Check-Out)'
+// #swagger.description = 'Digunakan oleh User untuk melakukan absensi pulang dengan verifikasi wajah dan lokasi.'
+// #swagger.security = [{ "bearerAuth": [] }]
+// #swagger.consumes = ['multipart/form-data']
+// #swagger.requestBody = {
+// #   required: true,
+// #   content: {
+// #     "multipart/form-data": {
+// #       schema: {
+// #         type: "object",
+// #         required: ["image", "latitude", "longitude"],
+// #         properties: {
+// #           image: {
+// #             type: "string",
+// #             format: "binary",
+// #             description: "Foto wajah untuk verifikasi"
+// #           },
+// #           latitude: {
+// #             type: "string",
+// #             description: "Latitude lokasi pengguna"
+// #           },
+// #           longitude: {
+// #             type: "string",
+// #             description: "Longitude lokasi pengguna"
+// #           },
+// #           locationName: {
+// #             type: "string",
+// #             description: "Nama lokasi (opsional)"
+// #           }
+// #         }
+// #       }
+// #     }
+// #   }
+// # }
   checkOut
 );
 
