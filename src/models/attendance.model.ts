@@ -6,6 +6,7 @@ interface IAttendance extends Document {
   type: "check-in" | "check-out";
   timestamp: Date;
   imageFileName?: string;
+  imageUrl?: string; // ✅ Tambahan field untuk URL Cloudinary
   location?: {
     latitude: number;
     longitude: number;
@@ -19,10 +20,11 @@ const AttendanceSchema = new Schema<IAttendance>({
   type: { type: String, enum: ["check-in", "check-out"], required: true },
   timestamp: { type: Date, default: Date.now },
 
-  // Menyimpan nama file gambar wajah yang diunggah
   imageFileName: { type: String },
 
-  // Menyimpan lokasi absensi
+  // ✅ Field baru untuk URL gambar di Cloudinary
+  imageUrl: { type: String },
+
   location: {
     latitude: { type: Number },
     longitude: { type: Number },

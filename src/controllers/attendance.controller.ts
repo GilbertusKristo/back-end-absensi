@@ -5,6 +5,7 @@ import { calculateDistance, getDescriptorFromBuffer } from "../utils/face.utils"
 import mongoose from "mongoose";
 import ContactModel from "../models/contact.model";
 import { formatWIB } from "../utils/date.utils";
+import uploader from "../utils/uploader";
 
 interface AuthenticatedRequest extends Request {
   user?: any;
@@ -18,79 +19,104 @@ const getRequestInfo = (req: Request) => ({
 });
 
 export const checkIn = async (req: AuthenticatedRequest, res: Response) => {
-  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-  if (!req.file) return res.status(400).json({ message: "No face image uploaded" });
-  const { latitude, longitude, locationName } = req.body;
-  if (!latitude || !longitude) return res.status(400).json({ message: "Location information is required" });
+  try {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    if (!req.file) return res.status(400).json({ message: "No face image uploaded" });
+    
+    const { latitude, longitude, locationName } = req.body;
+    if (!latitude || !longitude) return res.status(400).json({ message: "Location information is required" });
 
-  const userId = req.user.id;
-  const user = await UserModel.findById(userId).select('_id fullName username descriptor').lean();
-  const contact = await ContactModel.findOne({ userId }).lean();
-  if (!user || !user.descriptor || !contact) return res.status(404).json({ message: "Please fill in the contact form first" });
+    const userId = req.user.id;
+    const user = await UserModel.findById(userId).select('_id fullName username descriptor').lean();
+    const contact = await ContactModel.findOne({ userId }).lean();
+    if (!user || !user.descriptor || !contact) return res.status(404).json({ message: "Please fill in the contact form first" });
 
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-  const alreadyCheckedIn = await AttendanceModel.findOne({ userId, type: "check-in", timestamp: { $gte: todayStart } });
-  if (alreadyCheckedIn) return res.status(400).json({ message: "Already checked in today." });
+    // ✅ Cegah duplikat check-in hari ini
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const alreadyCheckedIn = await AttendanceModel.findOne({ userId, type: "check-in", timestamp: { $gte: todayStart } });
+    if (alreadyCheckedIn) return res.status(400).json({ message: "Already checked in today." });
 
-  const descriptor = await getDescriptorFromBuffer(req.file.buffer);
-  if (calculateDistance(descriptor, user.descriptor) > 0.5) return res.status(400).json({ message: "Face does not match" });
+    // ✅ Verifikasi wajah
+    const descriptor = await getDescriptorFromBuffer(req.file.buffer);
+    if (calculateDistance(descriptor, user.descriptor) > 0.5) return res.status(400).json({ message: "Face does not match" });
 
-  const timestamp = new Date();
-  const { date, time, full } = formatWIB(timestamp);
+    // ✅ Upload ke Cloudinary
+    const { buffer, mimetype, originalname } = req.file;
+    const uploadResult = await uploader.uploadSingle({ buffer, mimetype });
 
-  const attendance = await AttendanceModel.create({
-    userId,
-    type: "check-in",
-    timestamp,
-    imageFileName: req.file.originalname || "unknown",
-    location: { latitude: parseFloat(latitude), longitude: parseFloat(longitude), name: locationName || "Unknown Location" }
-  });
+    // ✅ Simpan absensi
+    const timestamp = new Date();
+    const { date, time, full } = formatWIB(timestamp);
 
-  res.json({
-    success: true,
-    message: "Check-in successful",
-    timestampUTC: timestamp,
-    timestampWIB: { date, time, full },
-    user: { _id: user._id, fullName: user.fullName, username: user.username, contact },
-    attendance
-  });
+    const attendance = await AttendanceModel.create({
+      userId,
+      type: "check-in",
+      timestamp,
+      imageFileName: originalname || "unknown",
+      imageUrl: uploadResult.secure_url,
+      location: { latitude: parseFloat(latitude), longitude: parseFloat(longitude), name: locationName || "Unknown Location" }
+    });
+
+    res.json({
+      success: true,
+      message: "Check-in successful",
+      timestampUTC: timestamp,
+      timestampWIB: { date, time, full },
+      user: { _id: user._id, fullName: user.fullName, username: user.username, contact },
+      attendance
+    });
+  } catch (error) {
+    res.status(500).json({ message: (error as Error).message });
+  }
 };
 
-// Check-out Handler
+// ✅ Handler Check-Out
 export const checkOut = async (req: AuthenticatedRequest, res: Response) => {
-  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-  if (!req.file) return res.status(400).json({ message: "No face image uploaded" });
-  const { latitude, longitude, locationName } = req.body;
-  if (!latitude || !longitude) return res.status(400).json({ message: "Location information is required" });
+  try {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    if (!req.file) return res.status(400).json({ message: "No face image uploaded" });
 
-  const userId = req.user.id;
-  const user = await UserModel.findById(userId).select('_id fullName username descriptor').lean();
-  const contact = await ContactModel.findOne({ userId }).lean();
-  if (!user || !user.descriptor || !contact) return res.status(404).json({ message: "Please fill in the contact form first" });
+    const { latitude, longitude, locationName } = req.body;
+    if (!latitude || !longitude) return res.status(400).json({ message: "Location information is required" });
 
-  const descriptor = await getDescriptorFromBuffer(req.file.buffer);
-  if (calculateDistance(descriptor, user.descriptor) > 0.5) return res.status(400).json({ message: "Face does not match" });
+    const userId = req.user.id;
+    const user = await UserModel.findById(userId).select('_id fullName username descriptor').lean();
+    const contact = await ContactModel.findOne({ userId }).lean();
+    if (!user || !user.descriptor || !contact) return res.status(404).json({ message: "Please fill in the contact form first" });
 
-  const timestamp = new Date();
-  const { date, time, full } = formatWIB(timestamp);
+    // ✅ Verifikasi wajah
+    const descriptor = await getDescriptorFromBuffer(req.file.buffer);
+    if (calculateDistance(descriptor, user.descriptor) > 0.5) return res.status(400).json({ message: "Face does not match" });
 
-  const attendance = await AttendanceModel.create({
-    userId,
-    type: "check-out",
-    timestamp,
-    imageFileName: req.file.originalname || "unknown",
-    location: { latitude: parseFloat(latitude), longitude: parseFloat(longitude), name: locationName || "Unknown Location" }
-  });
+    // ✅ Upload ke Cloudinary
+    const { buffer, mimetype, originalname } = req.file;
+    const uploadResult = await uploader.uploadSingle({ buffer, mimetype });
 
-  res.json({
-    success: true,
-    message: "Check-out successful",
-    timestampUTC: timestamp,
-    timestampWIB: { date, time, full },
-    user: { _id: user._id, fullName: user.fullName, username: user.username, contact },
-    attendance
-  });
+    // ✅ Simpan absensi
+    const timestamp = new Date();
+    const { date, time, full } = formatWIB(timestamp);
+
+    const attendance = await AttendanceModel.create({
+      userId,
+      type: "check-out",
+      timestamp,
+      imageFileName: originalname || "unknown",
+      imageUrl: uploadResult.secure_url,
+      location: { latitude: parseFloat(latitude), longitude: parseFloat(longitude), name: locationName || "Unknown Location" }
+    });
+
+    res.json({
+      success: true,
+      message: "Check-out successful",
+      timestampUTC: timestamp,
+      timestampWIB: { date, time, full },
+      user: { _id: user._id, fullName: user.fullName, username: user.username, contact },
+      attendance
+    });
+  } catch (error) {
+    res.status(500).json({ message: (error as Error).message });
+  }
 };
 
 export const getHistory = async (req: AuthenticatedRequest, res: Response) => {
