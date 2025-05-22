@@ -1380,6 +1380,9 @@
         ],
         "summary": "Export Kehadiran ke PDF",
         "description": "Hanya dapat diakses oleh ADMIN untuk mengunduh rekap kehadiran dalam format PDF.",
+        "produces": [
+          "application/pdf"
+        ],
         "responses": {
           "200": {
             "description": "Berhasil mengunduh laporan dalam format PDF"
