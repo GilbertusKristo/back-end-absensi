@@ -362,6 +362,15 @@ Router.get("/permission/me",
   permissionController.getMyPermissions
 );
 
+Router.get("/permission/me/:id",
+  // #swagger.tags = ['Permission']
+  // #swagger.security = [{ "bearerAuth": [] }]
+  // #swagger.parameters['id'] = { description: "Permission ID to retrieve" }
+  authMiddleware,
+  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
+  permissionController.getMyPermissionById
+)
+
 // ------------------- PERMISSION (Admin) -------------------
 
 Router.get("/permission",

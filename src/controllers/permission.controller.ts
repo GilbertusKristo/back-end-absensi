@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import PermissionModel, { permissionDAO } from "../models/permission.model";
 import { IReqUser } from "../utils/interfaces";
 import uploader from "../utils/uploader";
+import mongoose from "mongoose";
 
 export default {
   async createPermission(req: IReqUser, res: Response) {
@@ -73,6 +74,46 @@ export default {
     }
   },
 
+
+  async getMyPermissionById(req: IReqUser, res: Response) {
+    try {
+      const permissionId = req.params.id;
+
+      // Validasi ID
+      if (!mongoose.Types.ObjectId.isValid(permissionId)) {
+        return res.status(400).json({
+          message: "ID permission tidak valid",
+          data: null,
+        });
+      }
+
+      // Cari permission berdasarkan ID dan pastikan milik user yang login
+      const permission = await PermissionModel.findOne({
+        _id: permissionId,
+        userId: req.user?.id,
+      });
+
+      if (!permission) {
+        return res.status(404).json({
+          message: "Permission tidak ditemukan atau bukan milik Anda",
+          data: null,
+        });
+      }
+
+      res.status(200).json({
+        message: "Detail permission berhasil ditemukan",
+        data: permission,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: (error as Error).message,
+        data: null,
+      });
+    }
+  },
+
+
+
   async getAllPermissions(req: IReqUser, res: Response) {
     try {
       const list = await PermissionModel.find().populate("userId", "fullName username");
@@ -120,7 +161,7 @@ export default {
 
       let payload = { ...req.body };
 
-      // Jika ada file dokumenPendukung yang diupload
+
       if (req.file) {
         const { buffer, mimetype } = req.file;
         const result = await uploader.uploadSingle({ buffer, mimetype });
