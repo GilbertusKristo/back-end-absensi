@@ -471,7 +471,7 @@ Router.delete("/permission/:id",
 
 Router.post("/face/register",
   authMiddleware,
-  aclMiddleware([ROLES.USER]),
+  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   mediaMiddleware.single("image"),
   /* #swagger.tags = ['Face']
      #swagger.summary = 'Daftarkan Wajah untuk Face Recognition'
@@ -502,7 +502,7 @@ Router.post("/face/register",
 
 Router.post("/attendance/check-in",
   authMiddleware,
-  aclMiddleware([ROLES.USER]),
+  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   mediaMiddleware.single("image"),
   /* #swagger.tags = ['Attendance']
      #swagger.summary = 'Absen Masuk (Check-In)'
@@ -536,7 +536,7 @@ Router.post("/attendance/check-in",
 
 Router.post("/attendance/check-out",
   authMiddleware,
-  aclMiddleware([ROLES.USER]),
+  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   mediaMiddleware.single("image"),
   /* #swagger.tags = ['Attendance']
      #swagger.summary = 'Absen Pulang (Check-Out)'
@@ -598,7 +598,7 @@ Router.get("/attendance/history-by-date",
 /* Lihat Semua Riwayat Kehadiran */
 Router.get("/attendance/all",
   authMiddleware,
-  aclMiddleware([ROLES.ADMIN]),
+  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   /* #swagger.tags = ['Attendance']
      #swagger.summary = 'Lihat Semua Riwayat Kehadiran'
      #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk melihat semua riwayat absensi.'
@@ -611,7 +611,7 @@ Router.get("/attendance/all",
 /* Laporan Kehadiran Semua User */
 Router.get("/attendance/report",
   authMiddleware,
-  aclMiddleware([ROLES.ADMIN]),
+  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   /* #swagger.tags = ['Attendance']
      #swagger.summary = 'Laporan Kehadiran Semua User'
      #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk melihat rekap laporan kehadiran semua user.'
@@ -624,7 +624,7 @@ Router.get("/attendance/report",
 /* Statistik Kehadiran Bulanan */
 Router.get("/attendance/statistics",
   authMiddleware,
-  aclMiddleware([ROLES.ADMIN]),
+  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   /* #swagger.tags = ['Attendance']
      #swagger.summary = 'Laporan Statistik Kehadiran Bulanan'
      #swagger.description = 'Hanya dapat diakses oleh ADMIN. Menampilkan statistik check-in dan check-out bulan ini.'
@@ -637,7 +637,7 @@ Router.get("/attendance/statistics",
 /* Detail Kehadiran Berdasarkan ID */
 Router.get("/attendance/:id",
   authMiddleware,
-  aclMiddleware([ROLES.ADMIN]),
+  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   /* #swagger.tags = ['Attendance']
      #swagger.summary = 'Detail Kehadiran Berdasarkan ID'
      #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk melihat detail absensi berdasarkan ID.'
@@ -651,7 +651,7 @@ Router.get("/attendance/:id",
 /* Export Kehadiran ke Excel */
 Router.get("/attendance/export/excel",
   authMiddleware,
-  aclMiddleware([ROLES.ADMIN]),
+  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   /* #swagger.tags = ['Attendance']
      #swagger.summary = 'Export Kehadiran ke Excel'
      #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk mengunduh rekap kehadiran dalam format Excel (.xlsx).'
@@ -664,7 +664,7 @@ Router.get("/attendance/export/excel",
 /* Export Kehadiran ke PDF */
 Router.get("/attendance/export/pdf",
   authMiddleware,
-  aclMiddleware([ROLES.ADMIN]),
+  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   /* #swagger.tags = ['Attendance']
      #swagger.summary = 'Export Kehadiran ke PDF'
      #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk mengunduh rekap kehadiran dalam format PDF.'
