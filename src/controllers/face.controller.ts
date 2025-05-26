@@ -1,52 +1,46 @@
 import { Request, Response } from "express";
 import UserModel from "../models/user.model";
 import { getDescriptorFromBuffer } from "../utils/face.utils";
+import uploader from "../utils/uploader";
+
 
 interface AuthenticatedRequest extends Request {
   user?: {
     _id?: string;
-    id?: string;  // Support both _id and id
+    id?: string;
   };
   file?: Express.Multer.File;
 }
 
 export const registerFace = async (req: AuthenticatedRequest, res: Response) => {
-  console.log("[Register Face] Decoded User:", req.user);
-
-  if (!req.user) {
-    return res.status(401).json({ message: "Unauthorized - User not found in request" });
-  }
-
-  if (!req.file) {
-    return res.status(400).json({ message: "No file uploaded" });
-  }
-
   try {
-    const descriptor = await getDescriptorFromBuffer(req.file.buffer);
-
-    // Support both id and _id from token
-    const userId = req.user._id || req.user.id;
-
-    if (!userId) {
-      return res.status(400).json({ message: "User ID not provided in token" });
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized - User not found in request" });
     }
-
+    if (!req.file) {
+      return res.status(400).json({ message: "No face image uploaded" });
+    }
+    const userId = req.user._id || req.user.id;
     const user = await UserModel.findById(userId);
-    console.log("[Register Face] Fetched User from DB:", user);
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    const descriptor = await getDescriptorFromBuffer(req.file.buffer);
 
-    // ✅ Only update descriptor without risking other data loss
-    await UserModel.updateOne(
-      { _id: userId },
-      { $set: { descriptor: Array.from(descriptor) } }
-    );
+    // ✅ Upload gambar ke Cloudinary
+    const { buffer, mimetype, originalname } = req.file;
+    const uploadResult = await uploader.uploadSingle({ buffer, mimetype });
 
+    // ✅ Simpan ke database
+    user.descriptor = Array.from(descriptor);
+    user.faceImageUrl = uploadResult.secure_url;
+    await user.save();
+
+    // ✅ Respon sukses
     res.json({
       success: true,
       message: "Face registered successfully",
+      faceImageUrl: uploadResult.secure_url,
       descriptor: Array.from(descriptor)
     });
 
