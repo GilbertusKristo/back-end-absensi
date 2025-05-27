@@ -256,3 +256,133 @@ export const getAttendanceStatistics = async (_req: Request, res: Response) => {
   });
 };
 
+export const adminCheckInById = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({ message: "Forbidden: Only admin can perform this action" });
+    }
+
+    const { latitude, longitude, locationName } = req.body;
+    const { userId } = req.params;
+
+    if (!userId || !latitude || !longitude || !req.file) {
+      return res.status(400).json({ message: "userId (in URL), latitude, longitude, and face image are required" });
+    }
+
+    const user = await UserModel.findById(userId).select('_id fullName username descriptor').lean();
+    const contact = await ContactModel.findOne({ userId }).lean();
+    if (!user || !user.descriptor || !contact) {
+      return res.status(404).json({ message: "User or contact data not found" });
+    }
+
+    const descriptor = await getDescriptorFromBuffer(req.file.buffer);
+    const distance = calculateDistance(descriptor, user.descriptor);
+    if (distance > 0.5) return res.status(400).json({ message: "Face does not match the selected user" });
+
+    const uploadResult = await uploader.uploadSingle({
+      buffer: req.file.buffer,
+      mimetype: req.file.mimetype
+    });
+
+    const timestamp = new Date();
+    const { date, time, full } = formatWIB(timestamp);
+
+    const attendance = await AttendanceModel.create({
+      userId,
+      type: "check-in",
+      timestamp,
+      imageFileName: req.file.originalname || "admin_upload",
+      imageUrl: uploadResult.secure_url,
+      location: {
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
+        name: locationName || "Unknown Location"
+      },
+      performedBy: req.user.id
+    });
+
+    res.json({
+      success: true,
+      message: `Check-in successful for user ${user.username}`,
+      timestampUTC: timestamp,
+      timestampWIB: { date, time, full },
+      user: { _id: user._id, fullName: user.fullName, username: user.username, contact },
+      attendance
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: (error as Error).message });
+  }
+};
+
+
+
+export const adminCheckOutById = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({ message: "Forbidden: Only admin can perform this action" });
+    }
+
+    const { latitude, longitude, locationName } = req.body;
+    const { userId } = req.params;
+
+    if (!userId || !latitude || !longitude || !req.file) {
+      return res.status(400).json({
+        message: "userId (from URL), latitude, longitude, and image file are required"
+      });
+    }
+
+    // ✅ Ambil data user target
+    const user = await UserModel.findById(userId).select('_id fullName username descriptor').lean();
+    const contact = await ContactModel.findOne({ userId }).lean();
+
+    if (!user || !user.descriptor || !contact) {
+      return res.status(404).json({ message: "User or contact data not found" });
+    }
+
+    // ✅ Verifikasi wajah
+    const descriptor = await getDescriptorFromBuffer(req.file.buffer);
+    const distance = calculateDistance(descriptor, user.descriptor);
+    if (distance > 0.5) {
+      return res.status(400).json({ message: "Face does not match the selected user" });
+    }
+
+    // ✅ Upload gambar ke Cloudinary
+    const uploadResult = await uploader.uploadSingle({
+      buffer: req.file.buffer,
+      mimetype: req.file.mimetype
+    });
+
+    // ✅ Simpan data absensi
+    const timestamp = new Date();
+    const { date, time, full } = formatWIB(timestamp);
+
+    const attendance = await AttendanceModel.create({
+      userId,
+      type: "check-out",
+      timestamp,
+      imageFileName: req.file.originalname || "admin_upload",
+      imageUrl: uploadResult.secure_url,
+      location: {
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
+        name: locationName || "Unknown Location"
+      },
+      performedBy: req.user.id
+    });
+
+    res.json({
+      success: true,
+      message: `Check-out successful for user ${user.username}`,
+      timestampUTC: timestamp,
+      timestampWIB: { date, time, full },
+      user: { _id: user._id, fullName: user.fullName, username: user.username, contact },
+      attendance
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: (error as Error).message });
+  }
+};
+
+

@@ -9,7 +9,7 @@ import { ROLES } from '../utils/constant';
 import multer from 'multer';
 import mediaMiddleware from '../middlewares/media.middleware';
 import { registerFace } from '../controllers/face.controller';
-import { checkIn, checkOut, getAllAttendance, getAttendanceById, getAttendanceStatistics, getHistory, getHistoryByDate, getReport } from '../controllers/attendance.controller';
+import {  adminCheckInById,  adminCheckOutById, checkIn, checkOut, getAllAttendance, getAttendanceById, getAttendanceStatistics, getHistory, getHistoryByDate, getReport } from '../controllers/attendance.controller';
 import { exportAttendanceExcel, exportAttendancePDF } from '../controllers/export.controller';
 // import { matchFace, registerFace } from '../controllers/face.controller';
 
@@ -564,6 +564,79 @@ Router.post("/attendance/check-out",
   */
   checkOut
 );
+Router.post("/admin/attendance/check-in/:userId",
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
+  mediaMiddleware.single("image"),
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Admin Check-In by userId'
+     #swagger.description = 'Admin melakukan check-in untuk user lain dengan mencocokkan wajah via URL param.'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.consumes = ['multipart/form-data']
+     #swagger.parameters['userId'] = {
+       in: 'path',
+       required: true,
+       type: 'string',
+       description: 'ID user yang akan di-check-in'
+     }
+     #swagger.requestBody = {
+       required: true,
+       content: {
+         "multipart/form-data": {
+           schema: {
+             type: "object",
+             required: ["image", "latitude", "longitude"],
+             properties: {
+               image: { type: "string", format: "binary" },
+               latitude: { type: "string" },
+               longitude: { type: "string" },
+               locationName: { type: "string" }
+             }
+           }
+         }
+       }
+     }
+     #swagger.responses[200] = { description: "Admin check-in berhasil" }
+  */
+  adminCheckInById
+);
+
+Router.post("/admin/attendance/check-out/:userId",
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
+  mediaMiddleware.single("image"),
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Admin Check-Out by userId'
+     #swagger.description = 'Admin melakukan check-out untuk user lain dengan mencocokkan wajah via URL param.'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.parameters['userId'] = {
+       in: 'path',
+       required: true,
+       type: 'string',
+       description: 'ID user yang akan di-check-out'
+     }
+     #swagger.requestBody = {
+       required: true,
+       content: {
+         "multipart/form-data": {
+           schema: {
+             type: "object",
+             required: ["image", "latitude", "longitude"],
+             properties: {
+               image: { type: "string", format: "binary" },
+               latitude: { type: "string" },
+               longitude: { type: "string" },
+               locationName: { type: "string" }
+             }
+           }
+         }
+       }
+     }
+     #swagger.responses[200] = { description: "Admin check-out berhasil" }
+  */
+  adminCheckOutById
+);
+
 
 
 
