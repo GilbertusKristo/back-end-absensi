@@ -1235,6 +1235,150 @@
         }
       }
     },
+    "/admin/attendance/check-in/{userId}": {
+      "post": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Admin Check-In by userId",
+        "description": "Admin melakukan check-in untuk user lain dengan mencocokkan wajah via URL param.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID user yang akan di-check-in"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Admin check-in berhasil"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "image",
+                  "latitude",
+                  "longitude"
+                ],
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "latitude": {
+                    "type": "string"
+                  },
+                  "longitude": {
+                    "type": "string"
+                  },
+                  "locationName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/attendance/check-out/{userId}": {
+      "post": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Admin Check-Out by userId",
+        "description": "Admin melakukan check-out untuk user lain dengan mencocokkan wajah via URL param.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID user yang akan di-check-out"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Admin check-out berhasil"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "image",
+                  "latitude",
+                  "longitude"
+                ],
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "latitude": {
+                    "type": "string"
+                  },
+                  "longitude": {
+                    "type": "string"
+                  },
+                  "locationName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/attendance/history": {
       "get": {
         "tags": [
