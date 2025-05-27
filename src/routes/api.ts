@@ -347,6 +347,108 @@ Router.post('/permission',
   */
   permissionController.createPermission
 );
+Router.post(
+  "/admin/permission/:userId",
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
+  mediaMiddleware.single("file"),
+  /* #swagger.tags = ['Permission']
+     #swagger.summary = 'Admin Buat Izin untuk User'
+     #swagger.description = 'Endpoint ini memungkinkan admin membuat permintaan izin untuk user lain, termasuk upload dokumen pendukung (opsional).'
+
+     #swagger.security = [{ "bearerAuth": [] }]
+
+     #swagger.parameters['userId'] = {
+       in: 'path',
+       required: true,
+       type: 'string',
+       description: 'ID dari user yang akan dibuatkan izin (Permission)'
+     }
+
+     #swagger.consumes = ['multipart/form-data']
+     #swagger.requestBody = {
+       required: true,
+       content: {
+         "multipart/form-data": {
+           schema: {
+             type: "object",
+             required: ["tanggalMulai", "tanggalSelesai", "jenisPermission", "alasan"],
+             properties: {
+               tanggalMulai: {
+                 type: "string",
+                 format: "date",
+                 example: "2025-05-28",
+                 description: "Tanggal mulai izin"
+               },
+               tanggalSelesai: {
+                 type: "string",
+                 format: "date",
+                 example: "2025-05-29",
+                 description: "Tanggal selesai izin"
+               },
+               jenisPermission: {
+                 type: "string",
+                 example: "Izin Sakit",
+                 description: "Jenis izin yang diajukan"
+               },
+               alasan: {
+                 type: "string",
+                 example: "Demam dan flu",
+                 description: "Alasan pengajuan izin"
+               },
+               file: {
+                 type: "string",
+                 format: "binary",
+                 description: "File dokumen pendukung (opsional)"
+               }
+             }
+           }
+         }
+       }
+     }
+
+     #swagger.responses[201] = {
+       description: "Permission berhasil dibuat oleh admin",
+       content: {
+         "application/json": {
+           schema: {
+             type: "object",
+             properties: {
+               message: { type: "string", example: "Permission berhasil dibuat oleh admin untuk user 665cba9cfb73f8a8e44911d2" },
+               data: {
+                 type: "object",
+                 properties: {
+                   _id: { type: "string" },
+                   userId: { type: "string" },
+                   tanggalMulai: { type: "string", format: "date" },
+                   tanggalSelesai: { type: "string", format: "date" },
+                   jenisPermission: { type: "string" },
+                   alasan: { type: "string" },
+                   dokumenPendukung: { type: "string", format: "url" },
+                   performedBy: { type: "string" },
+                   createdAt: { type: "string", format: "date-time" },
+                   updatedAt: { type: "string", format: "date-time" }
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+
+     #swagger.responses[400] = {
+       description: "Validasi gagal: Ada field yang kosong"
+     }
+     #swagger.responses[403] = {
+       description: "Hanya admin yang bisa melakukan aksi ini"
+     }
+     #swagger.responses[500] = {
+       description: "Kesalahan server saat menyimpan data"
+     }
+  */
+  permissionController.createPermissionById
+);
+
 
 
 
