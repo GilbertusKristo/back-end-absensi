@@ -4,25 +4,33 @@ import path from 'path';
 
 const { Canvas, Image, ImageData } = canvas;
 
-// ✅ Force cast to any to resolve type conflict
+// Monkey patch canvas to face-api environment
 faceapi.env.monkeyPatch({
   Canvas: Canvas as any,
   Image: Image as any,
   ImageData: ImageData as any,
 });
 
-// ✅ Path ke model
+// Path ke model
 const modelPath = path.join(__dirname, '../../public/models');
 
 /**
  * Inisialisasi model face-api.js
  */
 export const initFaceApi = async () => {
-  await faceapi.nets.ssdMobilenetv1.loadFromDisk(modelPath);
+  await faceapi.nets.tinyFaceDetector.loadFromDisk(modelPath);
   await faceapi.nets.faceLandmark68Net.loadFromDisk(modelPath);
   await faceapi.nets.faceRecognitionNet.loadFromDisk(modelPath);
-  console.log('✅ FaceAPI Models Loaded from:', modelPath);
+  console.log('✅ FaceAPI Models Loaded (Tiny) from:', modelPath);
 };
+
+/**
+ * Opsi deteksi untuk TinyFaceDetector
+ */
+const tinyOptions = new faceapi.TinyFaceDetectorOptions({
+  inputSize: 160,       // Ukuran input kecil untuk kecepatan
+  scoreThreshold: 0.5,  // Threshold default
+});
 
 /**
  * Mengambil descriptor dari buffer gambar
@@ -31,7 +39,7 @@ export const getDescriptorFromBuffer = async (buffer: Buffer): Promise<Float32Ar
   const img = await canvas.loadImage(buffer) as any;
 
   const detection = await faceapi
-    .detectSingleFace(img as any)
+    .detectSingleFace(img, tinyOptions)
     .withFaceLandmarks()
     .withFaceDescriptor();
 

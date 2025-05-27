@@ -9,10 +9,9 @@ export interface User {
     role: string;
     profilePicture: string;
     isActive: boolean;
-    descriptor?: number[]; // ← Tambahan untuk Face Recognition
-    faceImageUrl ?: string; // ← Tambahan untuk URL gambar wajah
+    descriptor?: number[]; 
+    faceImageUrl ?: string; 
     createdAt?: string;
-
 }
 
 const Schema = mongoose.Schema;

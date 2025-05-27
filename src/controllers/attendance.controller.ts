@@ -31,7 +31,7 @@ export const checkIn = async (req: AuthenticatedRequest, res: Response) => {
     const contact = await ContactModel.findOne({ userId }).lean();
     if (!user || !user.descriptor || !contact) return res.status(404).json({ message: "Please fill in the contact form first" });
 
-    // ✅ Cegah duplikat check-in hari ini
+    
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
     const alreadyCheckedIn = await AttendanceModel.findOne({ userId, type: "check-in", timestamp: { $gte: todayStart } });
@@ -71,7 +71,6 @@ export const checkIn = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// ✅ Handler Check-Out
 export const checkOut = async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
@@ -184,7 +183,6 @@ export const getAllAttendance = async (_req: Request, res: Response) => {
   }
 };
 
-
 export const getAttendanceById = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
@@ -197,7 +195,6 @@ export const getAttendanceById = async (req: Request, res: Response) => {
   }
 };
 
-
 export const getReport = async (_req: Request, res: Response) => {
   const records = await AttendanceModel.find()
     .populate("userId", "fullName username")
@@ -205,7 +202,6 @@ export const getReport = async (_req: Request, res: Response) => {
 
   res.json({ success: true, message: "All users attendance report", data: records });
 };
-
 
 export const getAttendanceStatistics = async (_req: Request, res: Response) => {
   const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
