@@ -9,7 +9,7 @@ import { ROLES } from '../utils/constant';
 import multer from 'multer';
 import mediaMiddleware from '../middlewares/media.middleware';
 import { registerFace } from '../controllers/face.controller';
-import {  adminCheckInById,  adminCheckOutById, checkIn, checkOut, getAllAttendance, getAttendanceById, getAttendanceStatistics, getHistory, getHistoryByDate, getReport } from '../controllers/attendance.controller';
+import {  adminCheckInById,  adminCheckOutById, checkIn, checkOut, getAllAttendance, getAttendanceById, getAttendanceDetailById, getAttendanceStatistics, getHistory, getHistoryByDate, getReport } from '../controllers/attendance.controller';
 import { exportAttendanceExcel, exportAttendancePDF } from '../controllers/export.controller';
 // import { matchFace, registerFace } from '../controllers/face.controller';
 
@@ -666,6 +666,7 @@ Router.post("/attendance/check-out",
   */
   checkOut
 );
+
 Router.post("/admin/attendance/check-in/:userId",
   authMiddleware,
   aclMiddleware([ROLES.ADMIN]),
@@ -738,7 +739,27 @@ Router.post("/admin/attendance/check-out/:userId",
   */
   adminCheckOutById
 );
-
+Router.get("/attendance/:id",
+  authMiddleware,
+  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Detail Kehadiran Berdasarkan ID'
+     #swagger.description = 'Mengambil data kehadiran berdasarkan ID absensi.'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.parameters['id'] = {
+       in: 'path',
+       required: true,
+       description: 'ID absensi yang ingin diambil'
+     }
+     #swagger.responses[200] = {
+       description: 'Berhasil mengambil detail absensi'
+     }
+     #swagger.responses[404] = {
+       description: 'Data tidak ditemukan'
+     }
+  */
+  getAttendanceDetailById
+);
 
 
 

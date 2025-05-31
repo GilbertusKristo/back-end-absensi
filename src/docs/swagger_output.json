@@ -1516,6 +1516,42 @@
         }
       }
     },
+    "/attendance/{id}": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Detail Kehadiran Berdasarkan ID",
+        "description": "Hanya dapat diakses oleh ADMIN untuk melihat detail absensi berdasarkan ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID absensi yang ingin dilihat"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil mendapatkan detail absensi"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/attendance/history": {
       "get": {
         "tags": [
@@ -1628,42 +1664,6 @@
         "responses": {
           "200": {
             "description": "Statistik kehadiran berhasil diambil"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/attendance/{id}": {
-      "get": {
-        "tags": [
-          "Attendance"
-        ],
-        "summary": "Detail Kehadiran Berdasarkan ID",
-        "description": "Hanya dapat diakses oleh ADMIN untuk melihat detail absensi berdasarkan ID.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "ID absensi yang ingin dilihat"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Berhasil mendapatkan detail absensi"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         },
         "security": [

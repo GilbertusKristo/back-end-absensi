@@ -383,6 +383,35 @@ export const adminCheckOutById = async (req: AuthenticatedRequest, res: Response
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }
+  
+};
+
+
+export const getAttendanceDetailById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const attendance = await AttendanceModel.findById(id).populate("userId", "fullName username");
+
+    if (!attendance) {
+      return res.status(404).json({
+        success: false,
+        message: `Data absensi dengan ID ${id} tidak ditemukan`
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Berhasil mengambil data absensi dengan ID ${id}`,
+      data: attendance
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Terjadi kesalahan saat mengambil data absensi",
+      error: (error as Error).message
+    });
+  }
 };
 
 
