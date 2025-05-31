@@ -140,6 +140,40 @@ export const getHistory = async (req: AuthenticatedRequest, res: Response) => {
     data: records
   });
 };
+export const getAllMyAttendance = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const userId = new mongoose.Types.ObjectId(req.user.id);
+
+    const contact = await ContactModel.findOne({ userId }).lean();
+    if (!contact) {
+      return res.status(404).json({ message: "Contact not found" });
+    }
+
+    const records = await AttendanceModel.find({ userId }).sort({ timestamp: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: `All attendance records for user ${req.user.username}`,
+      user: {
+        _id: req.user.id,
+        username: req.user.username,
+        fullName: req.user.fullName,
+        contact
+      },
+      data: records
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve attendance history",
+      error: (error as Error).message
+    });
+  }
+};
 
 export const getHistoryByDate = async (req: AuthenticatedRequest, res: Response) => {
   const { date } = req.query;
