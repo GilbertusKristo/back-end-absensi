@@ -1516,6 +1516,34 @@
         }
       }
     },
+    "/attendance/my": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Ambil Semua Kehadiran Saya",
+        "description": "Mengambil semua riwayat kehadiran user yang sedang login berdasarkan token.",
+        "responses": {
+          "200": {
+            "description": "Berhasil mengambil semua data kehadiran user login"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/attendance/{id}": {
       "get": {
         "tags": [
