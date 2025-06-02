@@ -1516,7 +1516,7 @@
         }
       }
     },
-    "/attendance/my": {
+    "/attendance/me": {
       "get": {
         "tags": [
           "Attendance"
@@ -1530,9 +1530,6 @@
           "401": {
             "description": "Unauthorized"
           },
-          "404": {
-            "description": "Not Found"
-          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -1544,13 +1541,13 @@
         ]
       }
     },
-    "/attendance/{id}": {
+    "/attendance/me/{id}": {
       "get": {
         "tags": [
           "Attendance"
         ],
         "summary": "Detail Kehadiran Berdasarkan ID",
-        "description": "Hanya dapat diakses oleh ADMIN untuk melihat detail absensi berdasarkan ID.",
+        "description": "Mengambil data kehadiran berdasarkan ID absensi.",
         "parameters": [
           {
             "name": "id",
@@ -1559,43 +1556,24 @@
             "schema": {
               "type": "string"
             },
-            "description": "ID absensi yang ingin dilihat"
+            "description": "ID absensi yang ingin diambil"
           }
         ],
         "responses": {
           "200": {
-            "description": "Berhasil mendapatkan detail absensi"
+            "description": "Berhasil mengambil detail absensi"
           },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/attendance/history": {
-      "get": {
-        "tags": [
-          "Attendance"
-        ],
-        "summary": "Lihat Riwayat Kehadiran Saya",
-        "description": "Dapat diakses oleh USER dan ADMIN untuk melihat semua riwayat absensi user yang login.",
-        "responses": {
-          "200": {
-            "description": "Berhasil mendapatkan riwayat kehadiran"
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Data tidak ditemukan"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -1692,6 +1670,42 @@
         "responses": {
           "200": {
             "description": "Statistik kehadiran berhasil diambil"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/attendance/{id}": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Detail Kehadiran Berdasarkan ID",
+        "description": "Hanya dapat diakses oleh ADMIN untuk melihat detail absensi berdasarkan ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID absensi yang ingin dilihat"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil mendapatkan detail absensi"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [

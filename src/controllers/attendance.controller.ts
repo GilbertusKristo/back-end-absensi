@@ -117,63 +117,117 @@ export const checkOut = async (req: AuthenticatedRequest, res: Response) => {
     res.status(500).json({ message: (error as Error).message });
   }
 };
-
-export const getHistory = async (req: AuthenticatedRequest, res: Response) => {
-  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-  const userId = new mongoose.Types.ObjectId(req.user.id);
-
-  const contact = await ContactModel.findOne({ userId: userId }).lean();
-  if (!contact) return res.status(404).json({ message: "Contact not found" });
-
-  const records = await AttendanceModel.find({ userId }).sort({ timestamp: -1 });
-
-  res.json({
-    success: true,
-    message: `History for user ${req.user.id}`,
-    user: {
-      contact: {
-        email: contact.email,
-        address: contact.address,
-        phone: contact.phone
-      }
-    },
-    data: records
-  });
-};
-export const getAllMyAttendance = async (req: AuthenticatedRequest, res: Response) => {
+export const getMyAttendance = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    if (!req.user) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
     const userId = new mongoose.Types.ObjectId(req.user.id);
-
-    const contact = await ContactModel.findOne({ userId }).lean();
-    if (!contact) {
-      return res.status(404).json({ message: "Contact not found" });
-    }
 
     const records = await AttendanceModel.find({ userId }).sort({ timestamp: -1 });
 
     return res.status(200).json({
       success: true,
-      message: `All attendance records for user ${req.user.username}`,
-      user: {
-        _id: req.user.id,
-        username: req.user.username,
-        fullName: req.user.fullName,
-        contact
-      },
+      message: "Attendance records retrieved for logged-in user",
       data: records
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Failed to retrieve attendance history",
+      message: "Failed to retrieve attendance",
       error: (error as Error).message
     });
   }
 };
+export const getMyAttendanceDetailById = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid attendance ID format" });
+    }
+
+    const attendance = await AttendanceModel.findOne({
+      _id: id,
+      userId: req.user.id
+    });
+
+    if (!attendance) {
+      return res.status(404).json({ success: false, message: "Attendance not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Detail attendance with ID ${id} retrieved`,
+      data: attendance
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve attendance detail",
+      error: (error as Error).message
+    });
+  }
+};
+
+
+// export const getHistory = async (req: AuthenticatedRequest, res: Response) => {
+//   if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+//   const userId = new mongoose.Types.ObjectId(req.user.id);
+
+//   const contact = await ContactModel.findOne({ userId: userId }).lean();
+//   if (!contact) return res.status(404).json({ message: "Contact not found" });
+
+//   const records = await AttendanceModel.find({ userId }).sort({ timestamp: -1 });
+
+//   res.json({
+//     success: true,
+//     message: `History for user ${req.user.id}`,
+//     user: {
+//       contact: {
+//         email: contact.email,
+//         address: contact.address,
+//         phone: contact.phone
+//       }
+//     },
+//     data: records
+//   });
+// };
+// export const getAllMyAttendance = async (req: AuthenticatedRequest, res: Response) => {
+//   try {
+//     if (!req.user) {
+//       return res.status(401).json({ message: "Unauthorized" });
+//     }
+
+//     const userId = new mongoose.Types.ObjectId(req.user.id);
+
+//     const contact = await ContactModel.findOne({ userId }).lean();
+//     if (!contact) {
+//       return res.status(404).json({ message: "Contact not found" });
+//     }
+
+//     const records = await AttendanceModel.find({ userId }).sort({ timestamp: -1 });
+
+//     return res.status(200).json({
+//       success: true,
+//       message: `All attendance records for user ${req.user.username}`,
+//       user: {
+//         _id: req.user.id,
+//         username: req.user.username,
+//         fullName: req.user.fullName,
+//         contact
+//       },
+//       data: records
+//     });
+//   } catch (error) {
+//     return res.status(500).json({
+//       success: false,
+//       message: "Failed to retrieve attendance history",
+//       error: (error as Error).message
+//     });
+//   }
+// };
 
 export const getHistoryByDate = async (req: AuthenticatedRequest, res: Response) => {
   const { date } = req.query;

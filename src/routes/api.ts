@@ -9,7 +9,7 @@ import { ROLES } from '../utils/constant';
 import multer from 'multer';
 import mediaMiddleware from '../middlewares/media.middleware';
 import { registerFace } from '../controllers/face.controller';
-import {  adminCheckInById,  adminCheckOutById, checkIn, checkOut, getAllAttendance, getAllMyAttendance, getAttendanceById, getAttendanceDetailById, getAttendanceStatistics, getHistory, getHistoryByDate, getReport } from '../controllers/attendance.controller';
+import {  adminCheckInById,  adminCheckOutById, checkIn, checkOut, getAllAttendance, getAttendanceById, getAttendanceDetailById, getAttendanceStatistics, getHistoryByDate, getMyAttendance, getMyAttendanceDetailById, getReport } from '../controllers/attendance.controller';
 import { exportAttendanceExcel, exportAttendancePDF } from '../controllers/export.controller';
 // import { matchFace, registerFace } from '../controllers/face.controller';
 
@@ -739,21 +739,24 @@ Router.post("/admin/attendance/check-out/:userId",
   */
   adminCheckOutById
 );
-Router.get("/attendance/my",
+
+Router.get("/attendance/me",
   authMiddleware,
   aclMiddleware([ROLES.USER, ROLES.ADMIN]),
-  /* #swagger.tags = ['Attendance']
+  getMyAttendance
+    /* #swagger.tags = ['Attendance']
      #swagger.summary = 'Ambil Semua Kehadiran Saya'
      #swagger.description = 'Mengambil semua riwayat kehadiran user yang sedang login berdasarkan token.'
      #swagger.security = [{ "bearerAuth": [] }]
      #swagger.responses[200] = { description: "Berhasil mengambil semua data kehadiran user login" }
   */
-  getAllMyAttendance
 );
-Router.get("/attendance/:id",
+
+Router.get("/attendance/me/:id",
   authMiddleware,
   aclMiddleware([ROLES.USER, ROLES.ADMIN]),
-  /* #swagger.tags = ['Attendance']
+  getMyAttendanceDetailById
+    /* #swagger.tags = ['Attendance']
      #swagger.summary = 'Detail Kehadiran Berdasarkan ID'
      #swagger.description = 'Mengambil data kehadiran berdasarkan ID absensi.'
      #swagger.security = [{ "bearerAuth": [] }]
@@ -769,25 +772,25 @@ Router.get("/attendance/:id",
        description: 'Data tidak ditemukan'
      }
   */
-  getAttendanceDetailById
 );
 
 
 
 
-// Riwayat absensi user yang login
-/* Lihat Riwayat Kehadiran */
-Router.get("/attendance/history",
-  authMiddleware,
-  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
-  /* #swagger.tags = ['Attendance']
-     #swagger.summary = 'Lihat Riwayat Kehadiran Saya'
-     #swagger.description = 'Dapat diakses oleh USER dan ADMIN untuk melihat semua riwayat absensi user yang login.'
-     #swagger.security = [{ "bearerAuth": [] }]
-     #swagger.responses[200] = { description: 'Berhasil mendapatkan riwayat kehadiran' }
-  */
-  getHistory
-);
+
+// // Riwayat absensi user yang login
+// /* Lihat Riwayat Kehadiran */
+// Router.get("/attendance/history",
+//   authMiddleware,
+//   aclMiddleware([ROLES.USER, ROLES.ADMIN]),
+//   /* #swagger.tags = ['Attendance']
+//      #swagger.summary = 'Lihat Riwayat Kehadiran Saya'
+//      #swagger.description = 'Dapat diakses oleh USER dan ADMIN untuk melihat semua riwayat absensi user yang login.'
+//      #swagger.security = [{ "bearerAuth": [] }]
+//      #swagger.responses[200] = { description: 'Berhasil mendapatkan riwayat kehadiran' }
+//   */
+//   getHistory
+// );
 
 /* Lihat Riwayat Berdasarkan Tanggal */
 Router.get("/attendance/history-by-date",
