@@ -740,6 +740,21 @@ Router.post("/admin/attendance/check-out/:userId",
   adminCheckOutById
 );
 
+
+/* Lihat Semua Riwayat Kehadiran */
+Router.get("/attendance/all",
+  authMiddleware,
+  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Lihat Semua Riwayat Kehadiran'
+     #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk melihat semua riwayat absensi.'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.responses[200] = { description: 'Berhasil mendapatkan semua riwayat kehadiran' }
+  */
+  getAllAttendance
+);
+
+
 Router.get("/attendance/me",
   authMiddleware,
   aclMiddleware([ROLES.USER, ROLES.ADMIN]),
@@ -806,18 +821,6 @@ Router.get("/attendance/history-by-date",
   getHistoryByDate
 );
 
-/* Lihat Semua Riwayat Kehadiran */
-Router.get("/attendance/all",
-  authMiddleware,
-  aclMiddleware([ROLES.USER, ROLES.ADMIN]),
-  /* #swagger.tags = ['Attendance']
-     #swagger.summary = 'Lihat Semua Riwayat Kehadiran'
-     #swagger.description = 'Hanya dapat diakses oleh ADMIN untuk melihat semua riwayat absensi.'
-     #swagger.security = [{ "bearerAuth": [] }]
-     #swagger.responses[200] = { description: 'Berhasil mendapatkan semua riwayat kehadiran' }
-  */
-  getAllAttendance
-);
 
 /* Laporan Kehadiran Semua User */
 Router.get("/attendance/report",
