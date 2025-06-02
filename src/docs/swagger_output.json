@@ -1516,6 +1516,28 @@
         }
       }
     },
+    "/attendance/all": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "Lihat Semua Riwayat Kehadiran",
+        "description": "Hanya dapat diakses oleh ADMIN untuk melihat semua riwayat absensi.",
+        "responses": {
+          "200": {
+            "description": "Berhasil mendapatkan semua riwayat kehadiran"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/attendance/me": {
       "get": {
         "tags": [
@@ -1610,28 +1632,6 @@
           },
           "404": {
             "description": "Not Found"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/attendance/all": {
-      "get": {
-        "tags": [
-          "Attendance"
-        ],
-        "summary": "Lihat Semua Riwayat Kehadiran",
-        "description": "Hanya dapat diakses oleh ADMIN untuk melihat semua riwayat absensi.",
-        "responses": {
-          "200": {
-            "description": "Berhasil mendapatkan semua riwayat kehadiran"
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         },
         "security": [
