@@ -1,10 +1,10 @@
 import { RequestHandler } from "express";
 import ExcelJS from "exceljs";
 import PDFDocument from "pdfkit";
-import "../types/pdfkit-table-extend";
+import path from "path";
+import fs from "fs";
 import AttendanceModel from "../models/attendance.model";
-import PDFDocumentWithTables from "pdfkit-table"; // ✅ BENAR
-import path from "path"
+
 /**
  * Export Attendance to Excel (.xlsx)
  */
@@ -72,212 +72,142 @@ export const exportAttendanceExcel: RequestHandler = async (_req, res) => {
   res.end();
 };
 
-
-
 /**
  * Export Attendance to PDF (.pdf) with styled table
  */
-
-// ✅ WAJIB untuk versi ^0.1.99
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const exportAttendancePDF: RequestHandler = async (_req, res) => {
-  const records = await AttendanceModel.find().populate("userId", "fullName username").sort({ timestamp: -1 });
+  const records = await AttendanceModel.find()
+    .populate("userId", "fullName username")
+    .sort({ timestamp: -1 });
 
   const doc = new PDFDocument({
-    margin: 30,
+    margin: 40,
     size: "A4",
-    layout: "landscape",
+    layout: "portrait"
   });
 
   res.setHeader("Content-Type", "application/pdf");
   res.setHeader("Content-Disposition", "attachment; filename=attendance-report.pdf");
   doc.pipe(res);
 
-  // Style Colors
   const primaryColor = "#0066cc";
+  const headerBgColor = "#004a99";
   const headerTextColor = "#ffffff";
-  const tableHeaderBg = "#0078D7";
-  const altRowColor = "#f9f9f9";
-  const borderColor = "#cccccc";
+  const altRowColor = "#f2f2f2";
   const linkColor = "#0066cc";
 
-  // Optional Logo
-  const imagePath = path.join(process.cwd(), "public", "image", "elpiji.png").replace(/\\/g, "/");
+  const logoPath = path.join(process.cwd(), "public", "image", "elpiji.png").replace(/\\/g, "/");
+  const title = "Attendance Report - PT Ngupoyo Rejeki Lestari Mulya";
 
-  try {
-    doc
-      .image(imagePath, 30, 30, { width: 40 })
-      .fillColor(primaryColor)
-      .fontSize(18)
-      .font("Helvetica-Bold")
-      .text("Attendance Report - PT Ngupoyo Rejeki Lestari Mulya", 80, 40)
-      .fontSize(10)
-      .font("Helvetica")
-      .text(
-        `Generated on: ${new Date().toLocaleDateString("id-ID", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })}`,
-        80,
-        65
-      );
-  } catch {
-    doc
-      .fillColor(primaryColor)
-      .fontSize(18)
-      .font("Helvetica-Bold")
-      .text("Attendance Report - PT Ngupoyo Rejeki Lestari Mulya", 30, 40, { align: "center" })
-      .fontSize(10)
-      .font("Helvetica")
-      .text(
-        `Generated on: ${new Date().toLocaleDateString("id-ID", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })}`,
-        30,
-        65,
-        { align: "center" }
-      );
+  // Logo + Judul
+  if (fs.existsSync(logoPath)) {
+    doc.image(logoPath, 40, 40, { width: 40 });
   }
 
-  const checkInRecords = records.filter((r: any) => r.type === "check-in");
-  const checkOutRecords = records.filter((r: any) => r.type === "check-out");
+  doc
+    .fillColor(primaryColor)
+    .fontSize(16)
+    .font("Helvetica-Bold")
+    .text(title, 90, 45);
 
   doc
-    .moveDown(2)
+    .fillColor("black")
     .fontSize(10)
-    .fillColor("#333333")
-    .text(`Total Records: ${records.length} | Check-In: ${checkInRecords.length} | Check-Out: ${checkOutRecords.length}`, 30, 90);
+    .font("Helvetica")
+    .text(`Generated on: ${new Date().toLocaleDateString("id-ID")}`, 90, 65);
 
-  const renderTable = (title: string, dataset: any[], startY: number) => {
+  const checkIns = records.filter(r => r.type === "check-in");
+  const checkOuts = records.filter(r => r.type === "check-out");
+
+  const columns = ["No", "Full Name", "Username", "Date", "Time", "Location"];
+  const colWidths = [25, 110, 90, 70, 60, 130];
+
+  const renderTable = (title: string, dataSet: any[], yStart: number): number => {
+    // Judul Tabel
     doc
-      .rect(30, startY, 782, 25)
-      .fill(tableHeaderBg)
-      .fillColor(headerTextColor)
-      .fontSize(14)
       .font("Helvetica-Bold")
-      .text(title, 40, startY + 7);
+      .fontSize(12)
+      .fillColor(primaryColor)
+      .text(title, 40, yStart);
 
-    if (dataset.length === 0) {
-      doc.moveDown().fillColor("#333333").font("Helvetica").fontSize(10).text("No records found.", 40);
-      return startY + 50;
-    }
+    let y = yStart + 20;
 
-    const columns = [
-      { header: "No", width: 30 },
-      { header: "Full Name", width: 120 },
-      { header: "Username", width: 100 },
-      { header: "Date", width: 100 },
-      { header: "Time", width: 100 },
-      { header: "Location", width: 332 },
-    ];
+    // Header
+    doc.rect(40, y, 500, 20).fill(headerBgColor);
+    doc.fillColor(headerTextColor).fontSize(9).font("Helvetica-Bold");
 
-    const headerY = startY + 30;
-    doc
-      .rect(30, headerY, 782, 20)
-      .fillAndStroke(tableHeaderBg, borderColor)
-      .fillColor(headerTextColor)
-      .fontSize(10)
-      .font("Helvetica-Bold");
-
-    let xPos = 30;
-    columns.forEach((col) => {
-      doc.text(col.header, xPos + 5, headerY + 6);
-      xPos += col.width;
+    let x = 40;
+    columns.forEach((header, i) => {
+      doc.text(header, x + 5, y + 6, { width: colWidths[i] });
+      x += colWidths[i];
     });
 
-    let rowY = headerY + 20;
-    const rowHeight = 20;
+    y += 20;
 
-    dataset.forEach((record: any, index: number) => {
-      doc.rect(30, rowY, 782, rowHeight).fillAndStroke(index % 2 === 0 ? "#ffffff" : altRowColor, borderColor);
+    // Rows
+    dataSet.forEach((record, index) => {
+      const isAlt = index % 2 === 1;
+      doc.rect(40, y, 500, 20).fill(isAlt ? altRowColor : "#ffffff");
+      doc.fillColor("black").font("Helvetica").fontSize(9);
 
-      const fullName = record.userId?.fullName || "Unknown";
-      const username = record.userId?.username || "Unknown";
-      const timestamp = new Date(record.timestamp);
-      const date = timestamp.toLocaleDateString("id-ID");
-      const time = timestamp.toLocaleTimeString("id-ID");
-      const lat = record.location?.latitude;
-      const lon = record.location?.longitude;
-      const mapUrl = lat && lon ? `https://www.google.com/maps?q=${lat},${lon}` : "-";
+      const user = record.userId as any;
+      const fullName = user?.fullName || "-";
+      const username = user?.username || "-";
+      const date = new Date(record.timestamp).toLocaleDateString("id-ID");
+      const time = new Date(record.timestamp).toLocaleTimeString("id-ID");
+      const mapUrl = record.location?.latitude && record.location?.longitude
+        ? `https://maps.google.com?q=${record.location.latitude},${record.location.longitude}`
+        : "-";
 
-      xPos = 30;
-      doc.font("Helvetica").fontSize(9).fillColor("#333333");
-      doc.text((index + 1).toString(), xPos + 5, rowY + 6, { width: columns[0].width });
-      xPos += columns[0].width;
-      doc.text(fullName, xPos + 5, rowY + 6, { width: columns[1].width });
-      xPos += columns[1].width;
-      doc.text(username, xPos + 5, rowY + 6, { width: columns[2].width });
-      xPos += columns[2].width;
-      doc.text(date, xPos + 5, rowY + 6, { width: columns[3].width });
-      xPos += columns[3].width;
-      doc.text(time, xPos + 5, rowY + 6, { width: columns[4].width });
-      xPos += columns[4].width;
+      const row = [
+        index + 1,
+        fullName,
+        username,
+        date,
+        time,
+        mapUrl
+      ];
 
-      if (mapUrl !== "-") {
-        doc
-          .fillColor(linkColor)
-          .text("View on Maps", xPos + 5, rowY + 6, {
-            width: columns[5].width,
-            link: mapUrl,
-            underline: true,
-          })
-          .fillColor("#333333");
-      } else {
-        doc.text("-", xPos + 5, rowY + 6, { width: columns[5].width });
+      x = 40;
+      row.forEach((value, i) => {
+        if (i === 5 && value !== "-") {
+          doc.fillColor(linkColor).text("View on Maps", x + 5, y + 6, {
+            width: colWidths[i],
+            link: value.toString(),
+            underline: true
+          });
+          doc.fillColor("black");
+        } else {
+          doc.text(value.toString(), x + 5, y + 6, { width: colWidths[i] });
+        }
+        x += colWidths[i];
+      });
+
+      y += 20;
+      if (y > 780) {
+        doc.addPage();
+        y = 50;
       }
-
-      rowY += rowHeight;
     });
 
-    return rowY + 10;
+    return y;
   };
 
-  const checkInEndY = renderTable("Check-In Records", checkInRecords, 120);
-  renderTable("Check-Out Records", checkOutRecords, checkInEndY);
+  let nextY = renderTable("Check-In Report", checkIns, 100);
+  nextY = renderTable("Check-Out Report", checkOuts, nextY + 40);
+
+  // Footer
+  doc
+    .moveTo(40, nextY + 20)
+    .lineTo(550, nextY + 20)
+    .strokeColor("#cccccc")
+    .stroke();
 
   doc
-    .moveDown(2)
-    .fontSize(10)
+    .fontSize(9)
     .fillColor("gray")
-    .text("Generated by: Magang PT Ngupoyo Rejeki Lestari Mulya", 30, 550, { align: "right" });
+    .text("Generated by: Magang PT Ngupoyo Rejeki Lestari Mulya", 40, nextY + 30, { align: "right" });
 
   doc.end();
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
