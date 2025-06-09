@@ -3,8 +3,8 @@ import swaggerAutogen from "swagger-autogen";
 const doc = {
     info: {
         version: "v0.0.1",
-        title: "Dokumentasi API Absensi",
-        description: "Dokumentasi API Absensi",
+        title: "Dokumentasi API Absensi Berbasis Face Recognition",
+        description: "Dokumentasi API untuk sistem absensi berbasis face recognition yang mencakup fitur login, registrasi, manajemen kontak, dan pengajuan izin.",
     },
     servers: [
         {

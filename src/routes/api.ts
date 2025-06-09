@@ -9,7 +9,7 @@ import { ROLES } from '../utils/constant';
 import multer from 'multer';
 import mediaMiddleware from '../middlewares/media.middleware';
 import { registerFace } from '../controllers/face.controller';
-import {  adminCheckInById,  adminCheckOutById, checkIn, checkOut, getAllAttendance, getAttendanceById, getAttendanceDetailById, getAttendanceStatistics, getHistoryByDate, getMyAttendance, getMyAttendanceDetailById, getReport } from '../controllers/attendance.controller';
+import {  adminCheckInById,  adminCheckOutById, checkIn, checkOut, deleteAttendanceById, getAllAttendance, getAttendanceById, getAttendanceDetailById, getAttendanceStatistics, getHistoryByDate, getMyAttendance, getMyAttendanceDetailById, getReport } from '../controllers/attendance.controller';
 import { exportAttendanceExcel, exportAttendancePDF } from '../controllers/export.controller';
 // import { matchFace, registerFace } from '../controllers/face.controller';
 
@@ -633,9 +633,6 @@ Router.post("/attendance/check-in",
   checkIn
 );
 
-
-
-
 Router.post("/attendance/check-out",
   authMiddleware,
   aclMiddleware([ROLES.USER, ROLES.ADMIN]),
@@ -739,6 +736,24 @@ Router.post("/admin/attendance/check-out/:userId",
   */
   adminCheckOutById
 );
+Router.delete("/attendance/:id",
+  authMiddleware,
+  aclMiddleware([ROLES.ADMIN]),
+  /* #swagger.tags = ['Attendance']
+     #swagger.summary = 'Hapus Data Absensi'
+     #swagger.description = 'Menghapus data absensi berdasarkan ID. Hanya admin yang diizinkan.'
+     #swagger.security = [{ "bearerAuth": [] }]
+     #swagger.parameters['id'] = {
+       in: 'path',
+       required: true,
+       type: 'string',
+       description: 'ID absensi yang akan dihapus'
+     }
+     #swagger.responses[200] = { description: "Data absensi berhasil dihapus" }
+  */
+  deleteAttendanceById
+);
+
 
 
 /* Lihat Semua Riwayat Kehadiran */
