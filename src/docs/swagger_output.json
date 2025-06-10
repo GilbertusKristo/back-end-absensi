@@ -459,28 +459,19 @@
       }
     },
     "/auth/update-password": {
-      "patch": {
+      "put": {
         "tags": [
           "Auth"
         ],
         "description": "",
         "responses": {
-          "200": {
-            "description": "Password updated successfully"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
+          "default": {
+            "description": ""
           }
         },
         "security": [
           {
-            "bearerAuth": []
+            "bearerAuth": {}
           }
         ],
         "requestBody": {
@@ -488,18 +479,12 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "currentPassword": {
-                    "type": "string"
-                  },
-                  "newPassword": {
-                    "type": "string"
-                  },
-                  "confirmNewPassword": {
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/UpdatePasswordRequest"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePasswordRequest"
               }
             }
           }

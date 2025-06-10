@@ -204,33 +204,27 @@ Router.patch("/users/:id/reset-password",
   */
   authController.resetUserPasswordById
 );
-Router.patch("/auth/update-password",
-  authMiddleware,
-  /* #swagger.tags = ['Auth']
-     #swagger.security = [{ "bearerAuth": [] }]
-     #swagger.requestBody = {
-       required: true,
-       content: {
-         "application/json": {
-           schema: {
-             type: "object",
-             properties: {
-               currentPassword: { type: "string" },
-               newPassword: { type: "string" },
-               confirmNewPassword: { type: "string" }
-             }
-           }
-         }
-       }
-     }
-     #swagger.responses[200] = { description: "Password updated successfully" }
-  */
+Router.put(
+  "/auth/update-password",
+  [authMiddleware, aclMiddleware([ROLES.USER, ROLES.ADMIN])],
   authController.updatePassword
+  /*
+  #swagger.tags = ['Auth']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  #swagger.requestBody = {
+    required: true,
+    schema: {
+      $ref: "#/components/schemas/UpdatePasswordRequest"
+    }
+  }
+  */
 );
 
 
 
-/* ------------------- CONTACT (User) ------------------- */
+
 
 Router.get("/contact",
   // #swagger.tags = ['Contact']
@@ -257,9 +251,6 @@ Router.put("/contact",
   aclMiddleware([ROLES.USER]),
   contactController.updateContact
 );
-
-/* ------------------- CONTACT (Admin) ------------------- */
-
 Router.get("/contact/all",
   // #swagger.tags = ['Contact']
   // #swagger.security = [{ "bearerAuth": [] }]
@@ -294,11 +285,6 @@ Router.patch("/contact/:userId",
   aclMiddleware([ROLES.ADMIN]),
   contactController.updateContactById
 );
-
-
-/* ------------------- PERMISSION ------------------- */
-
-// ------------------- PERMISSION (User) -------------------
 
 Router.post('/permission',
   authMiddleware,

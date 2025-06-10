@@ -1,11 +1,12 @@
 import { Result } from './../../node_modules/arg/index.d';
 import { Request, Response } from 'express';
 import * as Yup from 'yup';
-import UserModel from '../models/user.model';
+import UserModel, { userUpdatePasswordDTO } from '../models/user.model';
 import { encrypt } from '../utils/encryption';
 import { generateToken } from '../utils/jwt';
 import { IReqUser } from '../utils/interfaces';
 import uploader from '../utils/uploader';
+import response from '../utils/response';
 
 
 type TRegister = {
@@ -361,33 +362,33 @@ export default {
  */
     async updatePassword(req: IReqUser, res: Response) {
         try {
-            const { currentPassword, newPassword, confirmNewPassword } = req.body;
+            const userId = req.user?.id;
+            const { oldPassword, password, confirmPassword } = req.body;
 
-            if (!currentPassword || !newPassword || !confirmNewPassword) {
-                return res.status(400).json({ message: "All password fields are required", data: null });
-            }
+            await userUpdatePasswordDTO.validate({
+                oldPassword,
+                password,
+                confirmPassword,
+            });
 
-            if (newPassword !== confirmNewPassword) {
-                return res.status(400).json({ message: "New passwords do not match", data: null });
-            }
+            const user = await UserModel.findById(userId);
 
-            const user = await UserModel.findById(req.user?.id);
-            if (!user) {
-                return res.status(404).json({ message: "User not found", data: null });
-            }
+            if (!user || user.password !== encrypt(oldPassword))
+                return response.notFound(res, "user not found");
 
-            const isPasswordValid = encrypt(currentPassword) === user.password;
-            if (!isPasswordValid) {
-                return res.status(400).json({ message: "Current password is incorrect", data: null });
-            }
-
-            user.password = encrypt(newPassword);  // ✅ Pastikan dienkripsi
-            await user.save();
-
-            res.status(200).json({ message: "Password updated successfully", data: null });
-
+            const result = await UserModel.findByIdAndUpdate(
+                userId,
+                {
+                    password: encrypt(password),
+                },
+                {
+                    new: true,
+                }
+        
+      );
+            response.success(res, result, "success to update password");
         } catch (error) {
-            res.status(500).json({ message: (error as Error).message, data: null });
+            response.error(res, error, "failed to update password");
         }
     },
 

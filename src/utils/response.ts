@@ -14,6 +14,15 @@ export default {
             data
         })
     },
+    notFound(res: Response, message: string = "not found") {
+        res.status(404).json({
+            meta: {
+                status: 404,
+                message,
+            },
+            data: null,
+        });
+    },
     error(res: Response, error: unknown, message: string) {
         if (error instanceof Yup.ValidationError) {
             return res.status(400).json({
@@ -55,7 +64,7 @@ export default {
                 status: 500,
                 message,
             },
-            data:error,
+            data: error,
         })
     },
     unauthorized(res: Response, message: string = "unauthorized") {
@@ -67,5 +76,5 @@ export default {
             data: null,
         })
     },
-    
+
 }
