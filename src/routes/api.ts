@@ -208,26 +208,62 @@ Router.put(
   "/auth/update-password",
   [authMiddleware, aclMiddleware([ROLES.USER, ROLES.ADMIN])],
   authController.updatePassword
-  /*
-  #swagger.tags = ['Auth']
-  #swagger.security = [{
-    "bearerAuth": {}
-  }]
-  #swagger.requestBody = {
-    required: true,
-             type: "object",
-             properties: {
-               oldPassword: { type: "string" },
-               password: { type: "string" },
-               confirmPassword: { type: "string"},
-             }
-  }
+  /* 
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'Update user password'
+    #swagger.description = 'Endpoint untuk mengganti password akun yang sedang login. Hanya dapat diakses oleh pengguna dengan peran USER atau ADMIN.'
+    #swagger.security = [{
+      "bearerAuth": []
+    }]
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            required: ["oldPassword", "password", "confirmPassword"],
+            properties: {
+              oldPassword: {
+                type: "string",
+                example: "Password123"
+              },
+              password: {
+                type: "string",
+                example: "PasswordBaru456"
+              },
+              confirmPassword: {
+                type: "string",
+                example: "PasswordBaru456"
+              }
+            }
+          }
+        }
+      }
+    }
+    #swagger.responses[200] = {
+      description: "Password updated successfully",
+      schema: {
+        message: "success to update password",
+        data: {
+          _id: "60c6f285c4804cf0a367fd46",
+          username: "user123"
+        }
+      }
+    }
+    #swagger.responses[400] = {
+      description: "Validation error or password mismatch"
+    }
+    #swagger.responses[401] = {
+      description: "Unauthorized"
+    }
+    #swagger.responses[404] = {
+      description: "User not found"
+    }
+    #swagger.responses[500] = {
+      description: "Internal server error"
+    }
   */
 );
-
-
-
-
 
 Router.get("/contact",
   // #swagger.tags = ['Contact']
@@ -236,7 +272,6 @@ Router.get("/contact",
   aclMiddleware([ROLES.USER]),
   contactController.getContact
 );
-
 Router.post("/contact",
   // #swagger.tags = ['Contact']
   // #swagger.security = [{ "bearerAuth": [] }]
@@ -245,7 +280,6 @@ Router.post("/contact",
   aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   contactController.createContact
 );
-
 Router.put("/contact",
   // #swagger.tags = ['Contact']
   // #swagger.security = [{ "bearerAuth": [] }]
