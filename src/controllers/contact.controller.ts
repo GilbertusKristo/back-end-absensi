@@ -30,9 +30,6 @@ export default {
             });
         }
     },
-
-
-
     async updateContact(req: IReqUser, res: Response) {
         try {
             const validated = await contactUpdateDAO.validate(req.body);
@@ -63,10 +60,6 @@ export default {
             });
         }
     },
-
-
-
-
     async getContact(req: IReqUser, res: Response) {
         /**
          * #swagger.tags = ['Contact']
@@ -94,7 +87,6 @@ export default {
             });
         }
     },
-
     async getContactById(req: Request, res: Response) {
         const userId = req.params.userId;
     
@@ -120,7 +112,6 @@ export default {
             });
         }
     },
-
     async updateContactById(req: Request, res: Response) {
         const userId = req.params.userId;
     
@@ -152,9 +143,7 @@ export default {
                 data: null,
             });
         }
-    },
-    
-    
+    },    
     async getAllContacts(req: IReqUser, res: Response) {
         try {
             const contacts = await ContactModel.find().populate("userId", "fullName username");
@@ -171,8 +160,6 @@ export default {
             });
         }
     },
-
-
     async deleteContactByAdmin(req: Request, res: Response) {
         const userIdToDelete = req.params.userId;
 

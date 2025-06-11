@@ -5,9 +5,6 @@ import path from "path";
 import fs from "fs";
 import AttendanceModel from "../models/attendance.model";
 
-/**
- * Export Attendance to Excel (.xlsx)
- */
 export const exportAttendanceExcel: RequestHandler = async (_req, res) => {
   const records = await AttendanceModel.find()
     .populate("userId", "fullName username")
@@ -71,10 +68,6 @@ export const exportAttendanceExcel: RequestHandler = async (_req, res) => {
   await workbook.xlsx.write(res);
   res.end();
 };
-
-/**
- * Export Attendance to PDF (.pdf) with styled table
- */
 export const exportAttendancePDF: RequestHandler = async (_req, res) => {
   const records = await AttendanceModel.find()
     .populate("userId", "fullName username")

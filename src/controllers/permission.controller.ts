@@ -8,8 +8,6 @@ export default {
   async createPermission(req: IReqUser, res: Response) {
     try {
       const { tanggalMulai, tanggalSelesai, jenisPermission, alasan } = req.body;
-
-      // Cek field kosong satu per satu
       const missingFields: string[] = [];
       if (!tanggalMulai) missingFields.push("tanggalMulai");
       if (!tanggalSelesai) missingFields.push("tanggalSelesai");
@@ -22,15 +20,12 @@ export default {
           data: null,
         });
       }
-
-      // Proses upload file jika ada
       let dokumenPendukungUrl: string | undefined;
       if (req.file) {
         const { buffer, mimetype } = req.file;
         const result = await uploader.uploadSingle({ buffer, mimetype });
         dokumenPendukungUrl = result.secure_url;
       }
-
       const payload = {
         userId: req.user?.id,
         tanggalMulai,
@@ -115,10 +110,6 @@ export default {
       });
     }
   },
-
-
-
-
   async getMyPermissions(req: IReqUser, res: Response) {
     try {
       const list = await PermissionModel.find({ userId: req.user?.id }).sort({ createdAt: -1 });
@@ -134,8 +125,6 @@ export default {
       });
     }
   },
-
-
   async getMyPermissionById(req: IReqUser, res: Response) {
     try {
       const permissionId = req.params.id;
@@ -172,9 +161,6 @@ export default {
       });
     }
   },
-
-
-
   async getAllPermissions(req: IReqUser, res: Response) {
     try {
       const list = await PermissionModel.find().populate("userId", "fullName username");
@@ -213,9 +199,6 @@ export default {
       });
     }
   },
-
-
-
   async updatePermissionById(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -249,11 +232,6 @@ export default {
       });
     }
   },
-
-
-
-
-
   async approvePermission(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -275,7 +253,6 @@ export default {
       });
     }
   },
-
   async deletePermission(req: Request, res: Response) {
     try {
       const deleted = await PermissionModel.findByIdAndDelete(req.params.id);

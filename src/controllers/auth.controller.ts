@@ -74,7 +74,6 @@ export default {
             })
         }
     },
-
     async login(req: Request, res: Response) {
 
 
@@ -124,7 +123,6 @@ export default {
             })
         }
     },
-
     async me(req: IReqUser, res: Response) {
 
 
@@ -145,7 +143,6 @@ export default {
             })
         }
     },
-
     async getAllUsers(req: IReqUser, res: Response) {
         try {
             const user = req.user;
@@ -212,9 +209,6 @@ export default {
             res.status(500).json({ message: (error as Error).message, data: null });
         }
     },
-    /**
- * Get User by ID
- */
     async getUserById(req: Request, res: Response) {
         try {
             const { id } = req.params;
@@ -234,10 +228,6 @@ export default {
             res.status(500).json({ message: err.message, data: null });
         }
     },
-
-    /**
-     * Update User by ID
-     */
     async updateUserById(req: Request, res: Response) {
         try {
             const { id } = req.params;
@@ -263,9 +253,6 @@ export default {
             res.status(500).json({ message: err.message, data: null });
         }
     },
-    /**
- * Update User's Profile Picture by ID (Admin Only)
- */
     async updateProfilePictureById(req: Request, res: Response) {
         try {
             const { id } = req.params;
@@ -292,10 +279,6 @@ export default {
             res.status(500).json({ message: (error as Error).message, data: null });
         }
     },
-
-    /**
- * Delete User by ID (Admin Only)
- */
     async deleteUserById(req: Request, res: Response) {
         try {
             const { id } = req.params;
@@ -319,12 +302,6 @@ export default {
             res.status(500).json({ message: err.message, data: null });
         }
     },
-    /**
-     * Admin Reset User Password by ID
-     */
-    /**
- * Reset User Password by ID (Admin Only)
- */
     async resetUserPasswordById(req: Request, res: Response) {
         try {
             const { id } = req.params;
@@ -343,7 +320,7 @@ export default {
                 return res.status(404).json({ message: "User not found", data: null });
             }
 
-            user.password = encrypt(newPassword);  // ✅ Pastikan dienkripsi
+            user.password = encrypt(newPassword);
             await user.save();
 
             res.status(200).json({ message: "User password reset successfully", data: null });
@@ -353,13 +330,6 @@ export default {
         }
     },
 
-
-    /**
- * Update Password (Self)
- */
-    /**
- * Update Password (Self)
- */
     async updatePassword(req: IReqUser, res: Response) {
         try {
             const userId = req.user?.id;
@@ -384,8 +354,8 @@ export default {
                 {
                     new: true,
                 }
-        
-      );
+
+            );
             response.success(res, result, "success to update password");
         } catch (error) {
             response.error(res, error, "failed to update password");

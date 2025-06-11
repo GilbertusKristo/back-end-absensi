@@ -170,65 +170,6 @@ export const getMyAttendanceDetailById = async (req: AuthenticatedRequest, res: 
     });
   }
 };
-
-
-// export const getHistory = async (req: AuthenticatedRequest, res: Response) => {
-//   if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-//   const userId = new mongoose.Types.ObjectId(req.user.id);
-
-//   const contact = await ContactModel.findOne({ userId: userId }).lean();
-//   if (!contact) return res.status(404).json({ message: "Contact not found" });
-
-//   const records = await AttendanceModel.find({ userId }).sort({ timestamp: -1 });
-
-//   res.json({
-//     success: true,
-//     message: `History for user ${req.user.id}`,
-//     user: {
-//       contact: {
-//         email: contact.email,
-//         address: contact.address,
-//         phone: contact.phone
-//       }
-//     },
-//     data: records
-//   });
-// };
-// export const getAllMyAttendance = async (req: AuthenticatedRequest, res: Response) => {
-//   try {
-//     if (!req.user) {
-//       return res.status(401).json({ message: "Unauthorized" });
-//     }
-
-//     const userId = new mongoose.Types.ObjectId(req.user.id);
-
-//     const contact = await ContactModel.findOne({ userId }).lean();
-//     if (!contact) {
-//       return res.status(404).json({ message: "Contact not found" });
-//     }
-
-//     const records = await AttendanceModel.find({ userId }).sort({ timestamp: -1 });
-
-//     return res.status(200).json({
-//       success: true,
-//       message: `All attendance records for user ${req.user.username}`,
-//       user: {
-//         _id: req.user.id,
-//         username: req.user.username,
-//         fullName: req.user.fullName,
-//         contact
-//       },
-//       data: records
-//     });
-//   } catch (error) {
-//     return res.status(500).json({
-//       success: false,
-//       message: "Failed to retrieve attendance history",
-//       error: (error as Error).message
-//     });
-//   }
-// };
-
 export const getHistoryByDate = async (req: AuthenticatedRequest, res: Response) => {
   const { date } = req.query;
   if (!date) return res.status(400).json({ message: "Date query is required, e.g., 2025-05-14" });
@@ -258,7 +199,6 @@ export const getHistoryByDate = async (req: AuthenticatedRequest, res: Response)
     data: records
   });
 };
-
 export const getAllAttendance = async (_req: Request, res: Response) => {
   try {
     const records = await AttendanceModel.find()
@@ -270,7 +210,6 @@ export const getAllAttendance = async (_req: Request, res: Response) => {
     res.status(500).json({ success: false, message: "Failed to retrieve attendance records", error });
   }
 };
-
 export const getAttendanceById = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
@@ -282,7 +221,6 @@ export const getAttendanceById = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: "Failed to retrieve attendance record", error });
   }
 };
-
 export const getReport = async (_req: Request, res: Response) => {
   const records = await AttendanceModel.find()
     .populate("userId", "fullName username")
@@ -290,7 +228,6 @@ export const getReport = async (_req: Request, res: Response) => {
 
   res.json({ success: true, message: "All users attendance report", data: records });
 };
-
 export const getAttendanceStatistics = async (_req: Request, res: Response) => {
   const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 
@@ -343,7 +280,6 @@ export const getAttendanceStatistics = async (_req: Request, res: Response) => {
     }
   });
 };
-
 export const adminCheckInById = async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.user || req.user.role !== 'admin') {

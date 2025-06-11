@@ -9,7 +9,7 @@ import { ROLES } from '../utils/constant';
 import multer from 'multer';
 import mediaMiddleware from '../middlewares/media.middleware';
 import { registerFace } from '../controllers/face.controller';
-import {  adminCheckInById,  adminCheckOutById, checkIn, checkOut, deleteAttendanceById, getAllAttendance, getAttendanceById, getAttendanceDetailById, getAttendanceStatistics, getHistoryByDate, getMyAttendance, getMyAttendanceDetailById, getReport } from '../controllers/attendance.controller';
+import { adminCheckInById, adminCheckOutById, checkIn, checkOut, deleteAttendanceById, getAllAttendance, getAttendanceById, getAttendanceDetailById, getAttendanceStatistics, getHistoryByDate, getMyAttendance, getMyAttendanceDetailById, getReport } from '../controllers/attendance.controller';
 import { exportAttendanceExcel, exportAttendancePDF } from '../controllers/export.controller';
 // import { matchFace, registerFace } from '../controllers/face.controller';
 
@@ -215,9 +215,12 @@ Router.put(
   }]
   #swagger.requestBody = {
     required: true,
-    schema: {
-      $ref: "#/components/schemas/UpdatePasswordRequest"
-    }
+             type: "object",
+             properties: {
+               oldPassword: { type: "string" },
+               password: { type: "string" },
+               confirmPassword: { type: "string"},
+             }
   }
   */
 );
@@ -760,34 +763,34 @@ Router.get("/attendance/me",
   authMiddleware,
   aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   getMyAttendance
-    /* #swagger.tags = ['Attendance']
-     #swagger.summary = 'Ambil Semua Kehadiran Saya'
-     #swagger.description = 'Mengambil semua riwayat kehadiran user yang sedang login berdasarkan token.'
-     #swagger.security = [{ "bearerAuth": [] }]
-     #swagger.responses[200] = { description: "Berhasil mengambil semua data kehadiran user login" }
-  */
+  /* #swagger.tags = ['Attendance']
+   #swagger.summary = 'Ambil Semua Kehadiran Saya'
+   #swagger.description = 'Mengambil semua riwayat kehadiran user yang sedang login berdasarkan token.'
+   #swagger.security = [{ "bearerAuth": [] }]
+   #swagger.responses[200] = { description: "Berhasil mengambil semua data kehadiran user login" }
+*/
 );
 
 Router.get("/attendance/me/:id",
   authMiddleware,
   aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   getMyAttendanceDetailById
-    /* #swagger.tags = ['Attendance']
-     #swagger.summary = 'Detail Kehadiran Berdasarkan ID'
-     #swagger.description = 'Mengambil data kehadiran berdasarkan ID absensi.'
-     #swagger.security = [{ "bearerAuth": [] }]
-     #swagger.parameters['id'] = {
-       in: 'path',
-       required: true,
-       description: 'ID absensi yang ingin diambil'
-     }
-     #swagger.responses[200] = {
-       description: 'Berhasil mengambil detail absensi'
-     }
-     #swagger.responses[404] = {
-       description: 'Data tidak ditemukan'
-     }
-  */
+  /* #swagger.tags = ['Attendance']
+   #swagger.summary = 'Detail Kehadiran Berdasarkan ID'
+   #swagger.description = 'Mengambil data kehadiran berdasarkan ID absensi.'
+   #swagger.security = [{ "bearerAuth": [] }]
+   #swagger.parameters['id'] = {
+     in: 'path',
+     required: true,
+     description: 'ID absensi yang ingin diambil'
+   }
+   #swagger.responses[200] = {
+     description: 'Berhasil mengambil detail absensi'
+   }
+   #swagger.responses[404] = {
+     description: 'Data tidak ditemukan'
+   }
+*/
 );
 
 

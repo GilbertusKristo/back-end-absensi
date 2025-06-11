@@ -22,19 +22,15 @@ export const registerFace = async (req: AuthenticatedRequest, res: Response) => 
     }
 
     const userId = req.user._id || req.user.id;
-    const user = await UserModel.findById(userId).select('_id'); // hanya ambil ID agar aman
+    const user = await UserModel.findById(userId).select('_id'); 
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     const descriptor = await getDescriptorFromBuffer(req.file.buffer);
-
-    // ✅ Upload ke Cloudinary
     const { buffer, mimetype } = req.file;
     const uploadResult = await uploader.uploadSingle({ buffer, mimetype });
-
-    // ✅ Update tanpa mengganggu password
     await UserModel.updateOne(
       { _id: userId },
       {

@@ -476,16 +476,16 @@
         ],
         "requestBody": {
           "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePasswordRequest"
-              }
+          "type": "object",
+          "properties": {
+            "oldPassword": {
+              "type": "string"
             },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePasswordRequest"
-              }
+            "password": {
+              "type": "string"
+            },
+            "confirmPassword": {
+              "type": "string"
             }
           }
         }
