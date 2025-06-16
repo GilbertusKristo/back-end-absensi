@@ -329,7 +329,6 @@ export default {
             res.status(500).json({ message: (error as Error).message, data: null });
         }
     },
-
     async updatePassword(req: IReqUser, res: Response) {
         try {
             const userId = req.user?.id;
@@ -361,14 +360,4 @@ export default {
             response.error(res, error, "failed to update password");
         }
     },
-
-
-
-
-
-
-
-
-
-
 };

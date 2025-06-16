@@ -70,7 +70,6 @@ export const checkIn = async (req: AuthenticatedRequest, res: Response) => {
     res.status(500).json({ message: (error as Error).message });
   }
 };
-
 export const checkOut = async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
@@ -255,7 +254,8 @@ export const getAttendanceStatistics = async (_req: Request, res: Response) => {
       time: r.timestamp.toTimeString().split(' ')[0], // HH:MM:SS
       location: {
         latitude: r.location?.latitude,
-        longitude: r.location?.longitude
+        longitude: r.location?.longitude,
+        name: r.location?.name || "Unknown"
       },
       contact: contact ? {
         email: contact.email,
@@ -365,9 +365,6 @@ export const deleteAttendanceById = async (req: Request, res: Response) => {
     });
   }
 };
-
-
-
 export const adminCheckOutById = async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.user || req.user.role !== 'admin') {
@@ -436,8 +433,6 @@ export const adminCheckOutById = async (req: AuthenticatedRequest, res: Response
   }
   
 };
-
-
 export const getAttendanceDetailById = async (req: Request, res: Response) => {
   const { id } = req.params;
 

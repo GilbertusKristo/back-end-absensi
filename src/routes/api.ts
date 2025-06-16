@@ -5,7 +5,6 @@ import aclMiddleware from '../middlewares/acl.middleware';
 import contactController from '../controllers/contact.controller';
 import permissionController from '../controllers/permission.controller';
 import { ROLES } from '../utils/constant';
-// import * as faceController from '../controllers/face.controller';
 import multer from 'multer';
 import mediaMiddleware from '../middlewares/media.middleware';
 import { registerFace } from '../controllers/face.controller';
@@ -134,9 +133,6 @@ Router.patch("/users/:id/profile-picture",
   */
   authController.updateProfilePictureById
 );
-
-
-
 Router.get("/users/:id",
   authMiddleware,
   aclMiddleware([ROLES.ADMIN]),
@@ -171,7 +167,6 @@ Router.put("/users/:id",
   */
   authController.updateUserById
 );
-
 Router.delete("/users/:id",
   authMiddleware,
   aclMiddleware([ROLES.ADMIN]),
@@ -264,7 +259,6 @@ Router.put(
     }
   */
 );
-
 Router.get("/contact",
   // #swagger.tags = ['Contact']
   // #swagger.security = [{ "bearerAuth": [] }]
@@ -495,9 +489,6 @@ Router.get("/permission/me/:id",
   aclMiddleware([ROLES.USER, ROLES.ADMIN]),
   permissionController.getMyPermissionById
 )
-
-// ------------------- PERMISSION (Admin) -------------------
-
 Router.get("/permission",
   // #swagger.tags = ['Permission']
   // #swagger.security = [{ "bearerAuth": [] }]
@@ -583,7 +574,6 @@ Router.put("/permission/:id/approve",
   aclMiddleware([ROLES.ADMIN]),
   permissionController.approvePermission
 );
-
 Router.delete("/permission/:id",
   // #swagger.tags = ['Permission']
   // #swagger.security = [{ "bearerAuth": [] }]
@@ -592,8 +582,6 @@ Router.delete("/permission/:id",
   aclMiddleware([ROLES.ADMIN]),
   permissionController.deletePermission
 );
-
-
 Router.post("/face/register",
   authMiddleware,
   aclMiddleware([ROLES.USER, ROLES.ADMIN]),
